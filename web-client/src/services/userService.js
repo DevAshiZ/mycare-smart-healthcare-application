@@ -1,12 +1,13 @@
 import api from "./api.js";
 import {login} from "../redux/slices/authSlice.js";
 
-export const registerUser = async (registerData) => {
+export const registerUser = (registerData) => async (dispatch) => {
     try{
         const response = await api.post("/user/register", registerData);
         console.log("User registered successfully: ", response);
         if(response.status === 200){
            alert("User registered successfully");
+           return true; // Return true if user registered successfully
         }
     }catch(error){
         console.log("User registered successfully: ", error);

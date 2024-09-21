@@ -2,7 +2,6 @@ import React, { useState } from "react";
 
 import { IMAGE_CONVENTIONS, LOGO } from "../../constants/theme_constraints";
 import {
-  Navbar,
   Collapse,
   Typography,
   Avatar,
@@ -23,7 +22,7 @@ import {
   faSignOut,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
-import {loginUser} from "../../services/userService.js";
+import {loginUser, registerUser} from "../../services/userService.js";
 import {useDispatch, useSelector} from "react-redux";
 import {logout} from "../../redux/slices/authSlice.js";
 
@@ -230,7 +229,17 @@ function ProfileMenu() {
 
 function LoginBtn() {
   const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen((cur) => !cur);
+  const [RegisterOpen, setRegisterOpen] = React.useState(false);
+  const handleOpen = () => {
+    if(RegisterOpen){
+        setRegisterOpen((cur) => !cur)
+    }
+    setOpen((cur) => !cur)
+  };
+  const handleRegisterOpen = () => {
+    setOpen((cur) => !cur); // close login dialog
+    setRegisterOpen((cur) => !cur)
+  };
   const dispatch = useDispatch();
 
   const [loginData, setLoginData] = useState({
@@ -238,24 +247,93 @@ function LoginBtn() {
     password: "",
   })
 
-    const handleLoginChange = (e) => {
+  const [registerData, setRegisterData] = useState({
+    email: "",
+    password: "",
+    firstName: "",
+    lastName: "",
+  })
+
+  const handleLoginChange = (e) => {
     const { name, value } = e.target;
     setLoginData((prev) => ({
       ...prev,
       [name]: value,
     }));
-    }
+  }
+  const handleRegisterChange = (e) => {
+    const { name, value } = e.target;
+    setRegisterData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }
 
-    const handleLoginSubmit = async () => {
+  // function to handle login form submission
+  const handleLoginSubmit = async () => {
       if(loginData.email === "" || loginData.password === ""){
         alert("Please enter your email and password");
         return;
       }
       await dispatch(loginUser(loginData));
+  }
+
+  // function to handle registration form submission
+  const handleRegistrationSubmit = async () => {
+    if(registerData.email === "" || registerData.password === "" || registerData.firstName === "" || registerData.lastName === ""){
+      alert("Please enter All fields");
+      return;
     }
+    const response = await dispatch(registerUser(registerData));
+    if(response){
+      handleOpen();
+    }
+  }
 
   return (
       <div>
+        {/*Registration form*/}
+        <Dialog
+            size="xl"
+            open={RegisterOpen}
+            handler={handleRegisterOpen}
+            className="bg-transparent shadow-none flex justify-center items-center"
+        >
+          <Card className="mx-auto flex-row w-full">
+            <CardHeader
+                shadow={false}
+                floated={false}
+                className="m-0 w-3/5 shrink-0 rounded-r-none"
+            >
+              <img
+                  src="https://img.freepik.com/premium-photo/healthcare-patient-group-doctors-rushing-surgery-diagnosis-treatment-hospital-stress-fast-team-medical-workers-hurry-emergency-operation-procedure-clinic_590464-238748.jpg?w=996"
+                  alt="card-image"
+                  className="h-full w-full object-cover"
+              />
+            </CardHeader>
+            <div>
+              <CardBody className="flex flex-col gap-4 w-full">
+                <Typography variant="h4" color="blue-gray">
+                  Sign Up
+                </Typography>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <Input name="firstName" label="First Name" size="sm" onChange={handleRegisterChange}/>
+
+                  <Input name="lastName" label="Last Name" size="sm" onChange={handleRegisterChange}/>
+                </div>
+                <Input name="email" label="Email" size="sm" onChange={handleRegisterChange}/>
+                <Input name="password" label="Password" size="sm" onChange={handleRegisterChange}/>
+                <Input type="password" name="re-password" label="Re-enter Password" size="sm" />
+                <Button variant="gradient" fullWidth onClick={handleRegistrationSubmit}> Register </Button>
+
+
+              </CardBody>
+            </div>
+          </Card>
+        </Dialog>
+
+        {/*Login form*/}
         <Dialog
             size="lg"
             open={open}
@@ -310,7 +388,7 @@ function LoginBtn() {
                       variant="small"
                       color="blue-gray"
                       className="ml-1 font-bold"
-                      onClick={handleOpen}
+                      onClick={handleRegisterOpen}
                   >
                     Sign up
                   </Typography>
