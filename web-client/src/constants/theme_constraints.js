@@ -14,6 +14,16 @@ export const LOGO = Object.freeze({
 export const NAMING_CONVENTIONS = Object.freeze({
   APP_NAME: "MyCare",
   APP_NAME_SHORT: "MyCare",
+  HOME: {
+    HERO_TITLE: "Virtual HealthCare For You",
+    HERO_CONTEXT: "Online healthcare platform accessible for everyone!",
+    SERVICES:{
+      SERVICES_DESCRIPTION:
+          "We provide the best choices for you. " +
+          "Adjust it to your health needs and make sure to undergo treatment with our highly qualified doctors. " +
+          "You can consult with us which type of services is suitable for your health.",
+    }
+  }
 });
 
 export const IMAGE_CONVENTIONS = Object.freeze({
