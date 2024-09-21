@@ -1,10 +1,11 @@
 import api from "./api.js";
+import {login} from "../redux/slices/authSlice.js";
 
 export const registerUser = async (registerData) => {
     try{
         const response = await api.post("/user/register", registerData);
         console.log("User registered successfully: ", response);
-        if(response.statusText === "OK"){
+        if(response.status === 200){
            alert("User registered successfully");
         }
     }catch(error){
@@ -12,12 +13,13 @@ export const registerUser = async (registerData) => {
     }
 }
 
-export const loginUser = async (loginData) => {
+export const loginUser = (loginData) => async (dispatch) => {
     try{
         const response = await api.post("/user/authenticate", loginData);
         console.log("User logged in successfully: ", response.data);
-        if(response.statusText === "OK"){
+        if(response.status === 200){
            alert("User logged in successfully");
+           dispatch(login(response.data));
         }
     }catch(error){
         console.log("User logged in successfully: ", error);

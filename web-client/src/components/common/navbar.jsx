@@ -24,6 +24,8 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import {loginUser} from "../../services/userService.js";
+import {useDispatch, useSelector} from "react-redux";
+import {logout} from "../../redux/slices/authSlice.js";
 
 function NavList() {
   return (
@@ -86,6 +88,7 @@ function NavList() {
 
 export function NavigationBar() {
   const [openNav, setOpenNav] = React.useState(false);
+  const { user } = useSelector((state) => state.auth);
 
   const handleWindowResize = () =>
     window.innerWidth >= 960 && setOpenNav(false);
@@ -114,8 +117,7 @@ export function NavigationBar() {
         </div>
 
         <div className="flex gap-2">
-            <LoginBtn />
-          <ProfileMenu />
+          {user ? (<ProfileMenu />)  : <LoginBtn />}
         </div>
         <IconButton
           variant="text"
@@ -163,6 +165,12 @@ function ProfileMenu() {
 
   const closeMenu = () => setIsMenuOpen(false);
 
+  const dispatch = useDispatch();
+
+    const handleLogout = async () => {
+    await dispatch(logout());
+    }
+
   return (
     <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
       <MenuHandler>
@@ -192,7 +200,7 @@ function ProfileMenu() {
           return (
             <MenuItem
               key={label}
-              onClick={closeMenu}
+              onClick={label === "Sign Out" ? handleLogout : closeMenu}
               className={`flex items-center gap-2 rounded ${
                 isLastItem
                   ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
@@ -223,6 +231,7 @@ function ProfileMenu() {
 function LoginBtn() {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen((cur) => !cur);
+  const dispatch = useDispatch();
 
   const [loginData, setLoginData] = useState({
     email: "",
@@ -242,7 +251,7 @@ function LoginBtn() {
         alert("Please enter your email and password");
         return;
       }
-      await loginUser(loginData);
+      await dispatch(loginUser(loginData));
     }
 
   return (
