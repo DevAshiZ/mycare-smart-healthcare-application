@@ -11,7 +11,7 @@ import {
   MenuHandler,
   MenuItem,
   MenuList,
-  IconButton,
+  IconButton, Dialog, Card, CardHeader, CardBody, Input, Checkbox, CardFooter,
 } from "@material-tailwind/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -23,6 +23,7 @@ import {
   faSignOut,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
+import {loginUser} from "../../services/userService.js";
 
 function NavList() {
   return (
@@ -112,7 +113,8 @@ export function NavigationBar() {
           <NavList />
         </div>
 
-        <div>
+        <div className="flex gap-2">
+            <LoginBtn />
           <ProfileMenu />
         </div>
         <IconButton
@@ -215,5 +217,102 @@ function ProfileMenu() {
         })}
       </MenuList>
     </Menu>
+  );
+}
+
+function LoginBtn() {
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen((cur) => !cur);
+
+  const [loginData, setLoginData] = useState({
+    email: "",
+    password: "",
+  })
+
+    const handleLoginChange = (e) => {
+    const { name, value } = e.target;
+    setLoginData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    }
+
+    const handleLoginSubmit = async () => {
+      if(loginData.email === "" || loginData.password === ""){
+        alert("Please enter your email and password");
+        return;
+      }
+      await loginUser(loginData);
+    }
+
+  return (
+      <div>
+        <Dialog
+            size="lg"
+            open={open}
+            handler={handleOpen}
+            className="bg-transparent shadow-none flex justify-center items-center"
+        >
+          <Card className="mx-auto   flex-row">
+            <CardHeader
+                shadow={false}
+                floated={false}
+                className="m-0 w-3/5 shrink-0 rounded-r-none"
+            >
+              <img
+                  src="https://img.freepik.com/free-photo/confident-female-doctor-hospital-room_9975-22979.jpg?t=st=1726923139~exp=1726926739~hmac=3a5c19ca31ab48973cb89cf0282d2597c62b408adca365498cb83dd1b468ed86&w=1060"
+                  alt="card-image"
+                  className="h-full w-full object-cover"
+              />
+            </CardHeader>
+            <div>
+              <CardBody className="flex flex-col gap-4">
+                <Typography variant="h4" color="blue-gray">
+                  Sign In
+                </Typography>
+                <Typography
+                    className="mb-3 font-normal"
+                    variant="paragraph"
+                    color="gray"
+                >
+                  Enter your email and password to Sign In.
+                </Typography>
+                <Typography className="-mb-2" variant="h6">
+                  Your Email
+                </Typography>
+                <Input name="email" label="Email" size="lg" onChange={handleLoginChange}/>
+                <Typography className="-mb-2" variant="h6">
+                  Your Password
+                </Typography>
+                <Input name="password" label="Password" size="lg" onChange={handleLoginChange}/>
+                <div className="-ml-2.5 -mt-3">
+                  <Checkbox label="Remember Me" />
+                </div>
+              </CardBody>
+              <CardFooter className="pt-0">
+                <Button variant="gradient" onClick={handleLoginSubmit} fullWidth>
+                  Sign In
+                </Button>
+                <Typography variant="small" className="mt-4 flex justify-center">
+                  Don&apos;t have an account?
+                  <Typography
+                      as="a"
+                      href="#signup"
+                      variant="small"
+                      color="blue-gray"
+                      className="ml-1 font-bold"
+                      onClick={handleOpen}
+                  >
+                    Sign up
+                  </Typography>
+                </Typography>
+              </CardFooter>
+            </div>
+          </Card>
+        </Dialog>
+        <Button onClick={handleOpen} variant="text">
+          Sign In
+        </Button>
+      </div>
   );
 }

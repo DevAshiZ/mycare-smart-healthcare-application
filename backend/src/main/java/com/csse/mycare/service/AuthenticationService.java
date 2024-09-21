@@ -7,11 +7,13 @@ import com.csse.mycare.dto.AuthenticationResponse;
 import com.csse.mycare.dto.RegisterRequest;
 import com.csse.mycare.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -56,6 +58,7 @@ public class AuthenticationService {
         // Generate JWT token
         var jwtToken = jwtService.generateToken(user);
 
+        // Return the token
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
 }

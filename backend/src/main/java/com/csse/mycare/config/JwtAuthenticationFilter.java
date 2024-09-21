@@ -34,9 +34,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwtToken;
         final String userEmail;
 
+        // Check if token is present and starts with "Bearer "
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
-            throw new RuntimeException("JWT Token is missing");
+            return;
         }
 
         jwtToken = authorizationHeader.substring(7);
