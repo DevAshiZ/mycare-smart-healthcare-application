@@ -25,6 +25,7 @@ import {
 import {loginUser, registerUser} from "../../services/userService.js";
 import {useDispatch, useSelector} from "react-redux";
 import {logout} from "../../redux/slices/authSlice.js";
+import {Link} from "react-router-dom";
 
 function NavList() {
   return (
@@ -35,12 +36,9 @@ function NavList() {
         color="blue-gray"
         className="p-1 font-medium font-abril"
       >
-        <a
-          href="#"
-          className="flex items-center hover:text-blue-500 transition-colors"
-        >
-          Pages
-        </a>
+       <Link to={'/'}  className="flex items-center hover:text-blue-500 transition-colors">
+         Home
+       </Link>
       </Typography>
       <Typography
         as="li"

@@ -4,13 +4,16 @@ import App from "./App.jsx";
 import "./index.css";
 import { ThemeProvider } from "@material-tailwind/react";
 import {Provider} from "react-redux";
-import {store} from "./redux/store.js";
+import store, {persistor} from "./redux/store.js";
+import {PersistGate} from "redux-persist/integration/react";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ThemeProvider>
      <Provider store={store}>
-        <App />
+         <PersistGate persistor={persistor} loading={null}>
+            <App />
+         </PersistGate>
      </Provider>
     </ThemeProvider>
   </StrictMode>

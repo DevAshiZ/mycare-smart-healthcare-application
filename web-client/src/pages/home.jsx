@@ -3,13 +3,15 @@ import {
   NAMING_CONVENTIONS,
 } from "../constants/theme_constraints";
 import {
-  Button,
-  Typography,
-  Card,
-  CardBody,
-  CardFooter,
+    Button,
+    Typography,
+    Card,
+    CardBody,
+    CardFooter, Dialog, Alert,
 } from "@material-tailwind/react";
 import PropTypes from "prop-types";
+import {useSelector} from "react-redux";
+import {useNavigate} from "react-router-dom";
 
 const CARD_CONTENTS = [
     {
@@ -54,6 +56,10 @@ export default function Home() {
 }
 
 function HeroSection() {
+
+  const {user} = useSelector(state => state.auth);
+  const navigate = useNavigate();
+
   return (
     <div
       className=" h-96 flex justify-between items-center gap-2 bg-cover bg-bottom "
@@ -74,7 +80,13 @@ function HeroSection() {
               {NAMING_CONVENTIONS.HOME.HERO_CONTEXT}
           </Typography>
 
-          <Button className="mt-2">Get Started</Button>
+            {user ? (
+                <Button onClick={ () => navigate('/dashboard')} className="mt-2">Make Appointment</Button>)
+                : (
+                <div>
+                    <Button className="mt-2">Get Started</Button>
+                </div>
+            )}
         </div>
       </div>
     </div>
