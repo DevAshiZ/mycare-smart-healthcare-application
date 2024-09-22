@@ -41,6 +41,7 @@ export const loginUser = (loginData) => async (dispatch) => {
                     status: "success"
                 }
             ));
+
            dispatch(login(response.data));
         }
     }catch(error){

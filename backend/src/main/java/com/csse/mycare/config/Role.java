@@ -5,5 +5,6 @@ package com.csse.mycare.config;
  */
 public enum Role {
     USER,
-    ADMIN
+    ADMIN,
+    DOCTOR
 }

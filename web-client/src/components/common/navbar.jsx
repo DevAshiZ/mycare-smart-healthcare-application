@@ -25,7 +25,7 @@ import {
 import {loginUser, registerUser} from "../../services/userService.js";
 import {useDispatch, useSelector} from "react-redux";
 import {logout} from "../../redux/slices/authSlice.js";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 function NavList() {
   return (
@@ -85,7 +85,7 @@ function NavList() {
 
 export function NavigationBar() {
   const [openNav, setOpenNav] = React.useState(false);
-  const { user } = useSelector((state) => state.auth);
+  const { user, role } = useSelector((state) => state.auth);
 
   const handleWindowResize = () =>
     window.innerWidth >= 960 && setOpenNav(false);
@@ -114,7 +114,14 @@ export function NavigationBar() {
         </div>
 
         <div className="flex gap-2">
-          {user ? (<ProfileMenu />)  : <LoginBtn />}
+          {user ? (
+              <div>
+                <div>
+                  <Typography variant="h6" color="blue-gray"> {user.role} </Typography>
+                </div>
+                <ProfileMenu />
+              </div>)  :
+              <LoginBtn />}
         </div>
         <IconButton
           variant="text"
@@ -159,6 +166,8 @@ const profileMenuItems = [
 
 function ProfileMenu() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+    const { user, role } = useSelector((state) => state.auth);
 
   const closeMenu = () => setIsMenuOpen(false);
 
@@ -195,29 +204,41 @@ function ProfileMenu() {
         {profileMenuItems.map(({ label, icon }, key) => {
           const isLastItem = key === profileMenuItems.length - 1;
           return (
-            <MenuItem
-              key={label}
-              onClick={label === "Sign Out" ? handleLogout : closeMenu}
-              className={`flex items-center gap-2 rounded ${
-                isLastItem
-                  ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
-                  : "text-gray-900 hover:bg-gray-200 focus:bg-gray-200 active:bg-gray-200"
-              }`}
-            >
-              <FontAwesomeIcon
-                icon={icon}
-                className={`h-4 w-4 ${isLastItem ? "text-red-500" : ""}`}
-              />
-
-              <Typography
-                as="span"
-                variant="small"
-                className="font-normal"
-                color={isLastItem ? "red" : "inherit"}
+              <MenuItem
+                  key={label}
+                  onClick={
+                    label === "Sign Out"
+                        ? handleLogout
+                        : label === "My Profile"
+                            ? () => {
+                              if (role === "DOCTOR") {
+                                navigate("/doc");
+                              } else {
+                                navigate("/profile");
+                              }
+                            }
+                            : closeMenu
+                  }
+                  className={`flex items-center gap-2 rounded ${
+                      isLastItem
+                          ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
+                          : "text-gray-900 hover:bg-gray-200 focus:bg-gray-200 active:bg-gray-200"
+                  }`}
               >
-                {label}
-              </Typography>
-            </MenuItem>
+                <FontAwesomeIcon
+                    icon={icon}
+                    className={`h-4 w-4 ${isLastItem ? "text-red-500" : ""}`}
+                />
+                <Typography
+                    as="span"
+                    variant="small"
+                    className="font-normal"
+                    color={isLastItem ? "red" : "inherit"}
+                >
+                  {label}
+                </Typography>
+              </MenuItem>
+
           );
         })}
       </MenuList>

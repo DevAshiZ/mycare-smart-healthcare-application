@@ -5,6 +5,7 @@ import {jwtDecode} from "jwt-decode";
 const initialState = {
     user: null,
     token: null,
+    role: "",
 };
 
 const authSlice = createSlice({
@@ -13,8 +14,8 @@ const authSlice = createSlice({
     reducers: {
         login(state, action) {
             const token = action.payload.token;
+            state.role = action.payload.role;
             state.token = token;
-
             // Decode the token to extract the "sub" (user email or ID)
             const decodedToken = jwtDecode(token);
             state.user = decodedToken.sub;  // Assign "sub" value (email) to user
