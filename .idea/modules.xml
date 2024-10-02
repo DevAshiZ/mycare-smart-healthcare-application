@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/backend/mycare.iml" filepath="$PROJECT_DIR$/backend/mycare.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/mycare-smart-healthcare-application.iml" filepath="$PROJECT_DIR$/.idea/mycare-smart-healthcare-application.iml" />
     </modules>
   </component>

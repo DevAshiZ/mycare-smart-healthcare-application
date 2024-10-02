@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,10 +35,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwtToken;
         final String userEmail;
 
-        // Check if token is present and starts with "Bearer "
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
+        String path = request.getRequestURI();
+        if (path.contains("/register") || path.contains("/authenticate")) {
+            filterChain.doFilter(request, response); // Skip custom logic and continue
             return;
+        }
+
+        if (authorizationHeader == null || authorizationHeader.isEmpty()) {
+            throw new AuthenticationCredentialsNotFoundException("Authorization Header is missing.");
         }
 
         jwtToken = authorizationHeader.substring(7);

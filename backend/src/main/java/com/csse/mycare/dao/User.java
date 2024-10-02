@@ -24,9 +24,13 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer user_id;
+    @Column(nullable = false)
     private String first_name;
+    @Column(nullable = false)
     private String last_name;
+    @Column(unique = true, nullable = false)
     private String email;
+    @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
