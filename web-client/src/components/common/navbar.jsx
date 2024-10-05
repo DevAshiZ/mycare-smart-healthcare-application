@@ -271,6 +271,8 @@ function LoginBtn() {
     password: "",
     firstName: "",
     lastName: "",
+    age: "",
+    gender: "",
   })
 
   const handleLoginChange = (e) => {
@@ -299,7 +301,8 @@ function LoginBtn() {
 
   // function to handle registration form submission
   const handleRegistrationSubmit = async () => {
-    if(registerData.email === "" || registerData.password === "" || registerData.firstName === "" || registerData.lastName === ""){
+    if(registerData.email === "" || registerData.password === "" || registerData.firstName === ""
+        || registerData.lastName === "" || registerData.age === "" || registerData.gender === ""){
       alert("Please enter All fields");
       return;
     }
@@ -341,9 +344,14 @@ function LoginBtn() {
 
                   <Input name="lastName" label="Last Name" size="sm" onChange={handleRegisterChange}/>
                 </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <Input name="age" label="Age" size="sm" onChange={handleRegisterChange}/>
+
+                  <Input name="gender" label="Gender" size="sm" onChange={handleRegisterChange}/>
+                </div>
                 <Input name="email" label="Email" size="sm" onChange={handleRegisterChange}/>
-                <Input name="password" label="Password" size="sm" onChange={handleRegisterChange}/>
-                <Input type="password" name="re-password" label="Re-enter Password" size="sm" />
+                <Input type="password" name="password" label="Password" size="sm" onChange={handleRegisterChange}/>
+                <Input type="password" name="re-password" label="Re-enter Password" size="sm"/>
                 <Button variant="gradient" fullWidth onClick={handleRegistrationSubmit}> Register </Button>
 
 
@@ -359,7 +367,7 @@ function LoginBtn() {
             handler={handleOpen}
             className="bg-transparent shadow-none flex justify-center items-center"
         >
-          <Card className="mx-auto   flex-row">
+        <Card className="mx-auto   flex-row">
             <CardHeader
                 shadow={false}
                 floated={false}

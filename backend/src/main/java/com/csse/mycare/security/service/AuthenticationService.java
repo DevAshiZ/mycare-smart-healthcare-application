@@ -1,8 +1,7 @@
 package com.csse.mycare.security.service;
 
-import com.csse.mycare.masterservice.dao.User;
-import com.csse.mycare.masterservice.repository.UserRepository;
-import com.csse.mycare.security.config.Role;
+import com.csse.mycare.masterservice.dao.Patient;
+import com.csse.mycare.masterservice.repository.PatientRepository;
 import com.csse.mycare.security.dto.AuthenticationRequest;
 import com.csse.mycare.security.dto.AuthenticationResponse;
 import com.csse.mycare.security.dto.RegisterRequest;
@@ -18,33 +17,32 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthenticationService {
 
-    private final UserRepository userRepository;
+    private final PatientRepository patientRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest registerRequest) {
-
-        var user = User.builder()
-                .first_name(registerRequest.getFirstname())
-                .last_name(registerRequest.getLastname())
+        var patient = Patient.builder()
+                .firstName(registerRequest.getFirstName())
+                .lastName(registerRequest.getLastName())
                 .email(registerRequest.getEmail())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
-                .role(Role.USER)
+                .age(Integer.valueOf(registerRequest.getAge()))
+                .gender(registerRequest.getGender())
                 .build();
 
         // Save user to database
-        userRepository.save(user);
+        patientRepository.save(patient);
 
         // Generate JWT token for the user
-        var jwtToken = jwtService.generateToken(user);
+        var jwtToken = jwtService.generateToken(patient);
 
         // Return the token
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest authRequest) {
-
         // Authenticate user
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 authRequest.getEmail(),
@@ -52,14 +50,17 @@ public class AuthenticationService {
         ));
 
         // Get user details
-        var user = userRepository.findByEmail(authRequest.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        var patient = patientRepository.findByEmail(authRequest.getEmail())
+                .orElseThrow(() -> {
+                    log.debug("User not found with email: {}", authRequest.getEmail());
+                    return new RuntimeException("User not found");
+                });
 
         // Generate JWT token
-        var jwtToken = jwtService.generateToken(user);
+        var jwtToken = jwtService.generateToken(patient);
 
         // Return the token
-        return AuthenticationResponse.builder().token(jwtToken).role(user.getRole().name()).build();
+        return AuthenticationResponse.builder().token(jwtToken).role(patient.getRole().name()).build();
     }
 
 }

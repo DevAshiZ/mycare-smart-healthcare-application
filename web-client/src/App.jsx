@@ -11,7 +11,7 @@ import AdminDashboard from "./pages/AdminDashboard.jsx";
 
 function AppContent() {
     const location = useLocation();
-    const isAdminRoute = location.pathname === "/admin";
+    const isAdminRoute = location.pathname.includes("/admin");
 
     return (
         <>
@@ -23,7 +23,7 @@ function AppContent() {
                     <Route path="/dashboard" element={<Dashboard/>}/>
                     <Route path="/doc" element={<DoctorDashboard/>}/>
                     <Route path="/profile" element={<Profile/>}/>
-                    <Route path="/admin" element={<AdminDashboard/>}/>
+                    <Route path="/admin/*" element={<AdminDashboard/>}/>
                 </Route>
             </Routes>
             {!isAdminRoute && <Footer/>}

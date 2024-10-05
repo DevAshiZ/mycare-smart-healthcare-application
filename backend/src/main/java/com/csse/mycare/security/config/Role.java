@@ -6,5 +6,7 @@ package com.csse.mycare.security.config;
 public enum Role {
     USER,
     ADMIN,
-    DOCTOR
+    DOCTOR,
+    PATIENT,
+    PHARMACY,
 }
