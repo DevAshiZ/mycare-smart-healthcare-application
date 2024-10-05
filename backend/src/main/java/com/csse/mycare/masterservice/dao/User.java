@@ -20,7 +20,6 @@ import java.util.List;
 @Entity
 @Table(name = "t_user")
 public class User implements UserDetails {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer user_id;
@@ -55,6 +54,4 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
     }
-
-
 }
