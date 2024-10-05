@@ -1,4 +1,4 @@
-package com.csse.mycare.config;
+package com.csse.mycare.security.config;
 
 /**
  * This enum class is used to define the roles of the users.

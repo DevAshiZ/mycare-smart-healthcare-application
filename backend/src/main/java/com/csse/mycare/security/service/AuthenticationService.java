@@ -1,11 +1,11 @@
-package com.csse.mycare.service;
+package com.csse.mycare.security.service;
 
-import com.csse.mycare.config.Role;
-import com.csse.mycare.dao.User;
-import com.csse.mycare.dto.AuthenticationRequest;
-import com.csse.mycare.dto.AuthenticationResponse;
-import com.csse.mycare.dto.RegisterRequest;
-import com.csse.mycare.repository.UserRepository;
+import com.csse.mycare.masterservice.dao.User;
+import com.csse.mycare.masterservice.repository.UserRepository;
+import com.csse.mycare.security.config.Role;
+import com.csse.mycare.security.dto.AuthenticationRequest;
+import com.csse.mycare.security.dto.AuthenticationResponse;
+import com.csse.mycare.security.dto.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -42,6 +42,7 @@ public class AuthenticationService {
         // Return the token
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
+
     public AuthenticationResponse authenticate(AuthenticationRequest authRequest) {
 
         // Authenticate user

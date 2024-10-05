@@ -1,6 +1,6 @@
-package com.csse.mycare.dao;
+package com.csse.mycare.masterservice.dao;
 
-import com.csse.mycare.config.Role;
+import com.csse.mycare.security.config.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,18 +47,8 @@ public class User implements UserDetails {
     }
 
     @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
     public boolean isAccountNonLocked() {
         return UserDetails.super.isAccountNonLocked();
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
     }
 
     @Override

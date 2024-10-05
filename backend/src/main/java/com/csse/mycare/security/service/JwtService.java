@@ -1,7 +1,6 @@
-package com.csse.mycare.service;
+package com.csse.mycare.security.service;
 
 import io.jsonwebtoken.Claims;
-
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -29,7 +28,7 @@ public class JwtService {
 
     // Generate token without extra claims
     public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>() , userDetails);
+        return generateToken(new HashMap<>(), userDetails);
     }
 
     public boolean isTokenValid(String jwtToken, UserDetails userDetails) {

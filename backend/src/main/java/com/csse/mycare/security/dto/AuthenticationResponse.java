@@ -1,4 +1,4 @@
-package com.csse.mycare.dto;
+package com.csse.mycare.security.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

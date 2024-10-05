@@ -1,6 +1,6 @@
-package com.csse.mycare.config;
+package com.csse.mycare.security.config;
 
-import com.csse.mycare.repository.UserRepository;
+import com.csse.mycare.masterservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +20,7 @@ public class ApplicationConfig {
     private final UserRepository userRepository;
 
     @Bean
-    public UserDetailsService  userDetailsService() {
+    public UserDetailsService userDetailsService() {
         return username -> userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
