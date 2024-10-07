@@ -1,9 +1,8 @@
 package com.csse.mycare.masterservice.dao;
 
-import com.csse.mycare.security.config.Role;
+import com.csse.mycare.common.constants.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;

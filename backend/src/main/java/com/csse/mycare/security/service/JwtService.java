@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
+@Slf4j
 public class JwtService {
 
     @Value("${jwt.secret.key}")
@@ -23,16 +25,19 @@ public class JwtService {
 
     public <T> T extractClaim(String jwtToken, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(jwtToken);
+        log.trace("Extracted claims: {}", claims);
         return claimsResolver.apply(claims);
     }
 
     // Generate token without extra claims
     public String generateToken(UserDetails userDetails) {
+        log.trace("Generating token for user: {}", userDetails.getUsername());
         return generateToken(new HashMap<>(), userDetails);
     }
 
     public boolean isTokenValid(String jwtToken, UserDetails userDetails) {
         final String username = extractUsername(jwtToken);
+        log.trace("Validating token for user: {}", username);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(jwtToken));
     }
 

@@ -18,9 +18,9 @@ public class Appointment {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     private LocalDate appointmentStart;
-    private LocalDate appointmentEnd;
-    @OneToOne
-    private Patient patient;
-    @OneToOne
-    private Doctor doctor;
+    private Integer duration;
+    @OneToOne(fetch = FetchType.EAGER)
+    private Schedule schedule;
+    @OneToOne(fetch = FetchType.EAGER)
+    private Payment payment;
 }

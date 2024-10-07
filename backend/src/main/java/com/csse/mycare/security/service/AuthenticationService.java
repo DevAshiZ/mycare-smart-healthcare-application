@@ -38,6 +38,8 @@ public class AuthenticationService {
         // Generate JWT token for the user
         var jwtToken = jwtService.generateToken(patient);
 
+        log.info("User registered successfully: {}", patient.getEmail());
+
         // Return the token
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
@@ -52,12 +54,14 @@ public class AuthenticationService {
         // Get user details
         var patient = patientRepository.findByEmail(authRequest.getEmail())
                 .orElseThrow(() -> {
-                    log.debug("User not found with email: {}", authRequest.getEmail());
+                    log.error("User not found with email: {}", authRequest.getEmail());
                     return new RuntimeException("User not found");
                 });
 
         // Generate JWT token
         var jwtToken = jwtService.generateToken(patient);
+
+        log.info("User authenticated successfully: {}", patient.getEmail());
 
         // Return the token
         return AuthenticationResponse.builder().token(jwtToken).role(patient.getRole().name()).build();
