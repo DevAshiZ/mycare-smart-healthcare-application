@@ -46,10 +46,15 @@ public class AuthenticationService {
 
     public AuthenticationResponse authenticate(AuthenticationRequest authRequest) {
         // Authenticate user
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                authRequest.getEmail(),
-                authRequest.getPassword()
-        ));
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    authRequest.getEmail(),
+                    authRequest.getPassword()
+            ));
+        } catch (Exception e) {
+            log.error("Authentication failed: {}", e.getMessage());
+            throw new RuntimeException("Authentication failed");
+        }
 
         // Get user details
         var patient = patientRepository.findByEmail(authRequest.getEmail())

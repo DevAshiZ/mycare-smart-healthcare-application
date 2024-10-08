@@ -5,7 +5,4 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 public class DoctorController extends BaseController {
-    public DoctorController() {
-        super(null);
-    }
 }
