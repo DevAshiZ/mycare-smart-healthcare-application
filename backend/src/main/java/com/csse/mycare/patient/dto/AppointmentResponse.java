@@ -1,9 +1,8 @@
 package com.csse.mycare.patient.dto;
 
 public record AppointmentResponse(
-        Integer id,
         String appointmentStart,
-        String appointmentEnd,
+        String appointmentDuration,
         Integer patientId,
         Integer doctorId,
         Boolean isMade
@@ -11,9 +10,8 @@ public record AppointmentResponse(
     @Override
     public String toString() {
         return "AppointmentResponse{" +
-                "id=" + id +
                 ", appointmentStart='" + appointmentStart + '\'' +
-                ", appointmentEnd='" + appointmentEnd + '\'' +
+                ", appointmentDuration='" + appointmentDuration + '\'' +
                 ", patientId=" + patientId +
                 ", doctorId=" + doctorId +
                 ", isMade=" + isMade +

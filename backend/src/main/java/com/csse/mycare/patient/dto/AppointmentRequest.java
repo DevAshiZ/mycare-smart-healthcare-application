@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 public class AppointmentRequest {
     private String appointmentStart;
-    private String appointmentEnd;
+    private Integer appointmentLength;
     private Integer patientId;
     private Integer doctorId;
 
@@ -19,7 +19,7 @@ public class AppointmentRequest {
     public String toString() {
         return "AppointmentRequest{" +
                 "appointmentStart='" + appointmentStart + '\'' +
-                ", appointmentEnd='" + appointmentEnd + '\'' +
+                ", appointmentLength='" + appointmentLength + '\'' +
                 ", patientId=" + patientId +
                 ", doctorId=" + doctorId +
                 '}';

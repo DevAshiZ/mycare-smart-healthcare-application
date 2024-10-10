@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 @AllArgsConstructor
@@ -17,10 +17,12 @@ public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-    private LocalDate appointmentStart;
+    private Date appointmentStart;
     private Integer duration;
     @OneToOne(fetch = FetchType.EAGER)
     private Schedule schedule;
     @OneToOne(fetch = FetchType.EAGER)
     private Payment payment;
+    @OneToOne(fetch = FetchType.EAGER)
+    private Patient patient;
 }
