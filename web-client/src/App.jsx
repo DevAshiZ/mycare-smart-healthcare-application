@@ -8,6 +8,7 @@ import AlertComponent from "./components/utils/alertComponent.jsx";
 import {DoctorDashboard} from "./pages/doctor_dashboard.jsx";
 import {Profile} from "./pages/profile.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
+import {Toaster} from "react-hot-toast";
 
 function AppContent() {
     const location = useLocation();
@@ -15,6 +16,10 @@ function AppContent() {
 
     return (
         <>
+            <Toaster
+                position="top-center"
+                reverseOrder={false}
+            />
             {!isAdminRoute && <NavigationBar/>}
             {!isAdminRoute && <AlertComponent/>}
             <Routes>
