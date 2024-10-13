@@ -2,7 +2,7 @@ package com.csse.mycare.security.controller;
 
 import com.csse.mycare.security.dto.AuthenticationRequest;
 import com.csse.mycare.security.dto.AuthenticationResponse;
-import com.csse.mycare.security.dto.RegisterRequest;
+import com.csse.mycare.security.dto.PatientRegisterRequest;
 import com.csse.mycare.security.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +21,9 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest registerRequest) {
-        log.info("Registering user: {}", registerRequest);
-        return ResponseEntity.ok(authenticationService.register(registerRequest));
+    public ResponseEntity<AuthenticationResponse> register(@RequestBody PatientRegisterRequest patientRegisterRequest) {
+        log.info("Registering user: {}", patientRegisterRequest);
+        return ResponseEntity.ok(authenticationService.register(patientRegisterRequest));
     }
 
     @PostMapping("/authenticate")

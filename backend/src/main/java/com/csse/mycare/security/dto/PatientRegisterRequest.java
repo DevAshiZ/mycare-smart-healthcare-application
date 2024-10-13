@@ -1,5 +1,6 @@
 package com.csse.mycare.security.dto;
 
+import com.csse.mycare.admin.dto.BaseRegistrationRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequest {
+public class PatientRegisterRequest implements BaseRegistrationRequest {
     private String firstName;
     private String lastName;
     private String email;

@@ -1,10 +1,18 @@
 package com.csse.mycare.security.service;
 
+import com.csse.mycare.admin.dto.BaseRegistrationRequest;
+import com.csse.mycare.admin.dto.DoctorRegistrationRequest;
+import com.csse.mycare.admin.dto.PharmacyRegistrationRequest;
+import com.csse.mycare.common.constants.Role;
+import com.csse.mycare.masterservice.dao.Doctor;
 import com.csse.mycare.masterservice.dao.Patient;
+import com.csse.mycare.masterservice.dao.Pharmacy;
+import com.csse.mycare.masterservice.repository.DoctorRepository;
 import com.csse.mycare.masterservice.repository.PatientRepository;
+import com.csse.mycare.masterservice.repository.PharmacyRepository;
 import com.csse.mycare.security.dto.AuthenticationRequest;
 import com.csse.mycare.security.dto.AuthenticationResponse;
-import com.csse.mycare.security.dto.RegisterRequest;
+import com.csse.mycare.security.dto.PatientRegisterRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,18 +26,20 @@ import org.springframework.stereotype.Service;
 public class AuthenticationService {
 
     private final PatientRepository patientRepository;
+    private final PharmacyRepository pharmacyRepository;
+    private final DoctorRepository doctorRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponse register(RegisterRequest registerRequest) {
+    public AuthenticationResponse register(PatientRegisterRequest patientRegisterRequest) {
         var patient = Patient.builder()
-                .firstName(registerRequest.getFirstName())
-                .lastName(registerRequest.getLastName())
-                .email(registerRequest.getEmail())
-                .password(passwordEncoder.encode(registerRequest.getPassword()))
-                .age(Integer.valueOf(registerRequest.getAge()))
-                .gender(registerRequest.getGender())
+                .firstName(patientRegisterRequest.getFirstName())
+                .lastName(patientRegisterRequest.getLastName())
+                .email(patientRegisterRequest.getEmail())
+                .password(passwordEncoder.encode(patientRegisterRequest.getPassword()))
+                .age(Integer.valueOf(patientRegisterRequest.getAge()))
+                .gender(patientRegisterRequest.getGender())
                 .build();
 
         // Save user to database
@@ -42,6 +52,47 @@ public class AuthenticationService {
 
         // Return the token
         return AuthenticationResponse.builder().token(jwtToken).build();
+    }
+
+    public Boolean registerWithRole(BaseRegistrationRequest registerRequest, Role role) {
+        try {
+            if (role == Role.DOCTOR) {
+                DoctorRegistrationRequest doctorRequest = (DoctorRegistrationRequest) registerRequest;
+                var doctor = Doctor.builder()
+                        .firstName(doctorRequest.getFirstName())
+                        .lastName(doctorRequest.getLastName())
+                        .email(doctorRequest.getEmail())
+                        .password(passwordEncoder.encode(doctorRequest.getPassword()))
+                        .specialization(doctorRequest.getSpecialization())
+                        .registrationNumber(doctorRequest.getRegistrationNumber())
+                        .build();
+
+                doctorRepository.save(doctor);
+            } else if (role == Role.PHARMACY) {
+                PharmacyRegistrationRequest pharmacyRegistrationRequest = (PharmacyRegistrationRequest) registerRequest;
+                var pharmacy = Pharmacy.builder()
+                        .firstName(pharmacyRegistrationRequest.getFirstName())
+                        .lastName(pharmacyRegistrationRequest.getLastName())
+                        .email(pharmacyRegistrationRequest.getEmail())
+                        .password(passwordEncoder.encode(pharmacyRegistrationRequest.getPassword()))
+                        .pharmacyName(pharmacyRegistrationRequest.getPharmacyName())
+                        .pharmacyAddress(pharmacyRegistrationRequest.getPharmacyAddress())
+                        .build();
+
+                pharmacyRepository.save(pharmacy);
+            } else if (role == Role.PATIENT) {
+                // TODO: Move the patient registration here and separate token generation
+            } else {
+                log.error("Invalid role: {}", role);
+                return false;
+            }
+        } catch (Exception e) {
+            log.error("Error registering user: {}", e.getMessage());
+            return false;
+        }
+
+        log.info("{} registered successfully: {}", role, registerRequest.getEmail());
+        return true;
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest authRequest) {
