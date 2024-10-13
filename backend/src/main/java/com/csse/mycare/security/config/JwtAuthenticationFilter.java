@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -38,6 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String userEmail;
 
         String path = request.getRequestURI();
+
         if (path.contains("/register") || path.contains("/authenticate")) {
             filterChain.doFilter(request, response); // Skip custom logic and continue
             log.trace("Skipping JWT Authentication for path: {}, request: {}", path, request);
@@ -46,6 +48,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (authorizationHeader == null || authorizationHeader.isEmpty()) {
             throw new AuthenticationCredentialsNotFoundException("Authorization Header is missing.");
+        }
+
+        if (!authorizationHeader.startsWith("Bearer ")) {
+            throw new AuthenticationCredentialsNotFoundException("Invalid Authorization Header.");
         }
 
         jwtToken = authorizationHeader.substring(7);
@@ -71,6 +77,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-        filterChain.doFilter(request, response);
+        try {
+            filterChain.doFilter(request, response);
+        } catch (AuthenticationException e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Unauthorized: " + e.getMessage());
+        }
+
     }
 }
