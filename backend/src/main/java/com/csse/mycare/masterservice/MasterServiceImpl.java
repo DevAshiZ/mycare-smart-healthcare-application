@@ -1,16 +1,21 @@
 package com.csse.mycare.masterservice;
 
+import com.csse.mycare.admin.dto.DoctorRegistrationRequest;
+import com.csse.mycare.admin.dto.PharmacyRegistrationRequest;
 import com.csse.mycare.common.CalendarUtil;
+import com.csse.mycare.common.constants.Role;
 import com.csse.mycare.common.exceptions.InvalidAppointmentTimeException;
 import com.csse.mycare.masterservice.dao.Appointment;
 import com.csse.mycare.masterservice.dao.Doctor;
 import com.csse.mycare.masterservice.service.AppointmentService;
 import com.csse.mycare.masterservice.service.DoctorService;
 import com.csse.mycare.masterservice.service.PatientService;
+import com.csse.mycare.masterservice.service.PharmacyService;
 import com.csse.mycare.patient.dto.AppointmentRequest;
 import com.csse.mycare.patient.dto.AppointmentResponse;
 import com.csse.mycare.patient.dto.DoctorAvailabilityRequest;
 import com.csse.mycare.patient.dto.DoctorAvailabilityResponse;
+import com.csse.mycare.security.service.AuthenticationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
@@ -25,16 +30,22 @@ public class MasterServiceImpl implements MasterService {
     AppointmentService appointmentService;
     DoctorService doctorService;
     PatientService patientService;
+    PharmacyService pharmacyService;
+    AuthenticationService authenticationService;
 
     @Autowired
     public MasterServiceImpl(
             AppointmentService appointmentService,
             DoctorService doctorService,
-            PatientService patientService
+            PatientService patientService,
+            PharmacyService pharmacyService,
+            AuthenticationService authenticationService
     ) {
         this.appointmentService = appointmentService;
         this.doctorService = doctorService;
         this.patientService = patientService;
+        this.pharmacyService = pharmacyService;
+        this.authenticationService = authenticationService;
     }
 
     @Override
@@ -83,8 +94,8 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    public Doctor saveDoctor(Doctor doctor) {
-        return doctorService.saveDoctor(doctor);
+    public Boolean saveDoctor(DoctorRegistrationRequest doctor) {
+        return authenticationService.registerWithRole(doctor, Role.DOCTOR);
     }
 
     @Override
@@ -100,6 +111,11 @@ public class MasterServiceImpl implements MasterService {
     @Override
     public List<Appointment> getAppointmentsByPatient(Integer patientId) {
         return appointmentService.getAppointmentsByPatient(patientId);
+    }
+
+    @Override
+    public Boolean savePharmacy(PharmacyRegistrationRequest pharmacy) {
+        return authenticationService.registerWithRole(pharmacy, Role.PHARMACY);
     }
 
     /**
