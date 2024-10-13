@@ -1,5 +1,7 @@
 package com.csse.mycare.masterservice;
 
+import com.csse.mycare.admin.dto.DoctorRegistrationRequest;
+import com.csse.mycare.admin.dto.PharmacyRegistrationRequest;
 import com.csse.mycare.common.exceptions.InvalidAppointmentTimeException;
 import com.csse.mycare.masterservice.dao.Appointment;
 import com.csse.mycare.masterservice.dao.Doctor;
@@ -33,7 +35,7 @@ public interface MasterService {
 
     Doctor getDoctorById(int id);
 
-    Doctor saveDoctor(Doctor doctor);
+    public Boolean saveDoctor(DoctorRegistrationRequest doctor);
 
     Doctor updateDoctor(Doctor doctor);
 
@@ -41,6 +43,9 @@ public interface MasterService {
 
     // Patient
     public List<Appointment> getAppointmentsByPatient(Integer patientId);
+
+    // Pharmacy
+    public Boolean savePharmacy(PharmacyRegistrationRequest pharmacy);
 
     // Standalone Methods
     public DoctorAvailabilityResponse getDoctorAvailableDates(DoctorAvailabilityRequest request);
