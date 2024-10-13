@@ -31,6 +31,7 @@ function AppContent() {
                     <Route path="/profile" element={<Profile/>}/>
                     <Route path="/admin/*" element={<AdminDashboard/>}/>
                     <Route path="/payment" element={<PaymentPage/>}/>
+
                 </Route>
             </Routes>
             {!isAdminRoute && <Footer/>}
