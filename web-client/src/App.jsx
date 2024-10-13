@@ -9,6 +9,7 @@ import {DoctorDashboard} from "./pages/doctor_dashboard.jsx";
 import {Profile} from "./pages/profile.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import {Toaster} from "react-hot-toast";
+import {PaymentPage} from "./pages/payment.jsx";
 
 function AppContent() {
     const location = useLocation();
@@ -29,6 +30,7 @@ function AppContent() {
                     <Route path="/doc" element={<DoctorDashboard/>}/>
                     <Route path="/profile" element={<Profile/>}/>
                     <Route path="/admin/*" element={<AdminDashboard/>}/>
+                    <Route path="/payment" element={<PaymentPage/>}/>
                 </Route>
             </Routes>
             {!isAdminRoute && <Footer/>}
