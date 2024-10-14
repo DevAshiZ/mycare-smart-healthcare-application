@@ -10,6 +10,7 @@ import com.csse.mycare.masterservice.dao.Pharmacy;
 import com.csse.mycare.masterservice.repository.DoctorRepository;
 import com.csse.mycare.masterservice.repository.PatientRepository;
 import com.csse.mycare.masterservice.repository.PharmacyRepository;
+import com.csse.mycare.masterservice.repository.UserRepository;
 import com.csse.mycare.security.dto.AuthenticationRequest;
 import com.csse.mycare.security.dto.AuthenticationResponse;
 import com.csse.mycare.security.dto.PatientRegisterRequest;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthenticationService {
 
+    private final UserRepository userRepository;
     private final PatientRepository patientRepository;
     private final PharmacyRepository pharmacyRepository;
     private final DoctorRepository doctorRepository;
@@ -107,19 +109,19 @@ public class AuthenticationService {
         }
 
         // Get user details
-        var patient = patientRepository.findByEmail(authRequest.getEmail())
+        var user = userRepository.findByEmail(authRequest.getEmail())
                 .orElseThrow(() -> {
                     log.error("User not found with email: {}", authRequest.getEmail());
                     return new RuntimeException("User not found");
                 });
 
         // Generate JWT token
-        var jwtToken = jwtService.generateToken(patient);
+        var jwtToken = jwtService.generateToken(user);
 
-        log.info("User authenticated successfully: {}", patient.getEmail());
+        log.info("User authenticated successfully: {}", user.getEmail());
 
         // Return the token
-        return AuthenticationResponse.builder().token(jwtToken).role(patient.getRole().name()).build();
+        return AuthenticationResponse.builder().token(jwtToken).role(user.getRole().name()).build();
     }
 
 }
