@@ -21,6 +21,21 @@
     npm start
 ```
 
+#### Installed Libraries
+
+##### React Hot Toast
+- Added Hot Toast for displaying toast messages
+
+``` bash
+    npm install --save react-hot-toast
+```
+
+- To use that simply visit this documentation
+
+    https://react-hot-toast.com/
+
+***
+
 ### Backend Configurations
 
 - Create a new database in PostgreSQL

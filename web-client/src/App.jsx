@@ -8,6 +8,8 @@ import AlertComponent from "./components/utils/alertComponent.jsx";
 import {DoctorDashboard} from "./pages/doctor_dashboard.jsx";
 import {Profile} from "./pages/profile.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
+import {Toaster} from "react-hot-toast";
+import {PaymentPage} from "./pages/payment.jsx";
 
 function AppContent() {
     const location = useLocation();
@@ -15,6 +17,10 @@ function AppContent() {
 
     return (
         <>
+            <Toaster
+                position="top-center"
+                reverseOrder={false}
+            />
             {!isAdminRoute && <NavigationBar/>}
             {!isAdminRoute && <AlertComponent/>}
             <Routes>
@@ -24,6 +30,8 @@ function AppContent() {
                     <Route path="/doc" element={<DoctorDashboard/>}/>
                     <Route path="/profile" element={<Profile/>}/>
                     <Route path="/admin/*" element={<AdminDashboard/>}/>
+                    <Route path="/payment" element={<PaymentPage/>}/>
+
                 </Route>
             </Routes>
             {!isAdminRoute && <Footer/>}

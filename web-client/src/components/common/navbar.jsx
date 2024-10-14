@@ -47,10 +47,10 @@ function NavList() {
         className="p-1 font-medium"
       >
         <a
-          href="#"
+          href="/profile"
           className="flex items-center hover:text-blue-500 transition-colors"
         >
-          Account
+          Profile
         </a>
       </Typography>
       <Typography
@@ -63,22 +63,10 @@ function NavList() {
           href="#"
           className="flex items-center hover:text-blue-500 transition-colors"
         >
-          Blocks
+          About Us
         </a>
       </Typography>
-      <Typography
-        as="li"
-        variant="small"
-        color="blue-gray"
-        className="p-1 font-medium"
-      >
-        <a
-          href="#"
-          className="flex items-center hover:text-blue-500 transition-colors"
-        >
-          Docs
-        </a>
-      </Typography>
+
     </ul>
   );
 }
@@ -86,6 +74,8 @@ function NavList() {
 export function NavigationBar() {
   const [openNav, setOpenNav] = React.useState(false);
   const { user, role } = useSelector((state) => state.auth);
+
+  console.log(user, role);
 
   const handleWindowResize = () =>
     window.innerWidth >= 960 && setOpenNav(false);
