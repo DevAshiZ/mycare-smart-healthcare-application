@@ -7,7 +7,7 @@ import {PrivateRoute} from "./services/privateRoute.jsx";
 import AlertComponent from "./components/utils/alertComponent.jsx";
 import {DoctorDashboard} from "./pages/doctor_dashboard.jsx";
 import {Profile} from "./pages/profile.jsx";
-import AdminDashboard from "./pages/AdminDashboard.jsx";
+import Admin_dashboard from "./pages/admin_dashboard.jsx";
 import {Toaster} from "react-hot-toast";
 import {PaymentPage} from "./pages/payment.jsx";
 
@@ -29,7 +29,7 @@ function AppContent() {
                     <Route path="/dashboard" element={<Dashboard/>}/>
                     <Route path="/doc" element={<DoctorDashboard/>}/>
                     <Route path="/profile" element={<Profile/>}/>
-                    <Route path="/admin/*" element={<AdminDashboard/>}/>
+                    <Route path="/admin/*" element={<Admin_dashboard/>}/>
                     <Route path="/payment" element={<PaymentPage/>}/>
 
                 </Route>
