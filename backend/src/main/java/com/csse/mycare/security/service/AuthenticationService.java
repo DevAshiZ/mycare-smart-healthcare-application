@@ -4,6 +4,7 @@ import com.csse.mycare.admin.dto.BaseRegistrationRequest;
 import com.csse.mycare.admin.dto.DoctorRegistrationRequest;
 import com.csse.mycare.admin.dto.PharmacyRegistrationRequest;
 import com.csse.mycare.common.constants.Role;
+import com.csse.mycare.common.exceptions.UserAlreadyExistsException;
 import com.csse.mycare.common.exceptions.UserRegistrationException;
 import com.csse.mycare.masterservice.dao.Doctor;
 import com.csse.mycare.masterservice.dao.Patient;
@@ -57,40 +58,47 @@ public class AuthenticationService {
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
 
-    public Boolean registerWithRole(BaseRegistrationRequest registerRequest, Role role) throws UserRegistrationException {
-        try {
-            if (role == Role.DOCTOR) {
-                DoctorRegistrationRequest doctorRequest = (DoctorRegistrationRequest) registerRequest;
-                var doctor = Doctor.builder()
-                        .firstName(doctorRequest.getFirstName())
-                        .lastName(doctorRequest.getLastName())
-                        .email(doctorRequest.getEmail())
-                        .password(passwordEncoder.encode(doctorRequest.getPassword()))
-                        .specialization(doctorRequest.getSpecialization())
-                        .registrationNumber(doctorRequest.getRegistrationNumber())
-                        .build();
-                doctorRepository.save(doctor);
-            } else if (role == Role.PHARMACY) {
-                PharmacyRegistrationRequest pharmacyRegistrationRequest = (PharmacyRegistrationRequest) registerRequest;
-                var pharmacy = Pharmacy.builder()
-                        .firstName(pharmacyRegistrationRequest.getFirstName())
-                        .lastName(pharmacyRegistrationRequest.getLastName())
-                        .email(pharmacyRegistrationRequest.getEmail())
-                        .password(passwordEncoder.encode(pharmacyRegistrationRequest.getPassword()))
-                        .pharmacyName(pharmacyRegistrationRequest.getPharmacyName())
-                        .pharmacyAddress(pharmacyRegistrationRequest.getPharmacyAddress())
-                        .build();
+    public Boolean registerWithRole(BaseRegistrationRequest registerRequest, Role role) throws UserAlreadyExistsException {
+        if (role == Role.DOCTOR) {
+            DoctorRegistrationRequest doctorRequest = (DoctorRegistrationRequest) registerRequest;
 
-                pharmacyRepository.save(pharmacy);
-            } else if (role == Role.PATIENT) {
-                // TODO: Move the patient registration here and separate token generation
-            } else {
-                log.error("Invalid role: {}", role);
-                return false;
+            if (doctorRepository.getDoctorByEmail(doctorRequest.getEmail()) != null) {
+                log.error("Doctor already exists with email: {}", doctorRequest.getEmail());
+                throw new UserAlreadyExistsException("Doctor already exists with email: " + doctorRequest.getEmail());
             }
-        } catch (Exception e) {
-            log.error("Error registering user: {}", e.getMessage());
-            throw new UserRegistrationException();
+
+            var doctor = Doctor.builder()
+                    .firstName(doctorRequest.getFirstName())
+                    .lastName(doctorRequest.getLastName())
+                    .email(doctorRequest.getEmail())
+                    .password(passwordEncoder.encode(doctorRequest.getPassword()))
+                    .specialization(doctorRequest.getSpecialization())
+                    .registrationNumber(doctorRequest.getRegistrationNumber())
+                    .build();
+            doctorRepository.save(doctor);
+        } else if (role == Role.PHARMACY) {
+            PharmacyRegistrationRequest pharmacyRegistrationRequest = (PharmacyRegistrationRequest) registerRequest;
+
+            if (pharmacyRepository.getPharmacyByEmail(pharmacyRegistrationRequest.getEmail())) {
+                log.error("Pharmacy already exists with email: {}", pharmacyRegistrationRequest.getEmail());
+                throw new UserAlreadyExistsException("Doctor already exists with email: " + pharmacyRegistrationRequest.getEmail());
+            }
+
+            var pharmacy = Pharmacy.builder()
+                    .firstName(pharmacyRegistrationRequest.getFirstName())
+                    .lastName(pharmacyRegistrationRequest.getLastName())
+                    .email(pharmacyRegistrationRequest.getEmail())
+                    .password(passwordEncoder.encode(pharmacyRegistrationRequest.getPassword()))
+                    .pharmacyName(pharmacyRegistrationRequest.getPharmacyName())
+                    .pharmacyAddress(pharmacyRegistrationRequest.getPharmacyAddress())
+                    .build();
+
+            pharmacyRepository.save(pharmacy);
+        } else if (role == Role.PATIENT) {
+            // TODO: Move the patient registration here and separate token generation
+        } else {
+            log.error("Invalid role: {}", role);
+            return false;
         }
 
         log.info("{} registered successfully: {}", role, registerRequest.getEmail());

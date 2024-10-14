@@ -3,6 +3,7 @@ package com.csse.mycare.masterservice;
 import com.csse.mycare.admin.dto.DoctorRegistrationRequest;
 import com.csse.mycare.admin.dto.PharmacyRegistrationRequest;
 import com.csse.mycare.common.exceptions.InvalidAppointmentTimeException;
+import com.csse.mycare.common.exceptions.UserAlreadyExistsException;
 import com.csse.mycare.common.exceptions.UserRegistrationException;
 import com.csse.mycare.masterservice.dao.Appointment;
 import com.csse.mycare.masterservice.dao.Doctor;
@@ -36,7 +37,7 @@ public interface MasterService {
 
     Doctor getDoctorById(int id);
 
-    public Boolean saveDoctor(DoctorRegistrationRequest doctor) throws UserRegistrationException;
+    public Boolean saveDoctor(DoctorRegistrationRequest doctor) throws UserRegistrationException, UserAlreadyExistsException;
 
     Doctor updateDoctor(Doctor doctor);
 
@@ -46,7 +47,7 @@ public interface MasterService {
     public List<Appointment> getAppointmentsByPatient(Integer patientId);
 
     // Pharmacy
-    public Boolean savePharmacy(PharmacyRegistrationRequest pharmacy) throws UserRegistrationException;
+    public Boolean savePharmacy(PharmacyRegistrationRequest pharmacy) throws UserRegistrationException, UserAlreadyExistsException;
 
     // Standalone Methods
     public DoctorAvailabilityResponse getDoctorAvailableDates(DoctorAvailabilityRequest request);
