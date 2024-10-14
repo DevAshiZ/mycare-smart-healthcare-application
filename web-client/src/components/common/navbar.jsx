@@ -105,20 +105,27 @@ export function NavigationBar() {
 
         <div className="flex gap-2">
           {user ? (
-              <div className={'flex gap-4 items-center'}>
-                <div onClick={()=>navigate('/admin/*')}>
-                  {
-                      role === "ADMIN" && <Button size={"sm"} color={"orange"}> ADMIN DASHBOARD </Button>
-                  }
-                </div>
-                <ProfileMenu />
-              </div>)  :
-              <LoginBtn />}
+                  <div className={'flex gap-4 items-center'}>
+                    <div onClick={() => navigate('/admin/*')}>
+                      {
+                          role === "ADMIN" && <Button size={"sm"} color={"orange"}> ADMIN DASHBOARD </Button>
+                      }
+
+                    </div>
+                    <div onClick={() => navigate('/doctor/dashboard')}>
+                      {
+                          role === "DOCTOR" && <Button size={"sm"} color={"orange"}> DOCTOR DASHBOARD </Button>
+                      }
+
+                    </div>
+                    <ProfileMenu/>
+                  </div>) :
+              <LoginBtn/>}
         </div>
         <IconButton
-          variant="text"
-          className="ml-auto h-6 w-6 text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
-          ripple={false}
+            variant="text"
+            className="ml-auto h-6 w-6 text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
+            ripple={false}
           onClick={() => setOpenNav(!openNav)}
         >
           {openNav ? (
