@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Slf4j
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/admin/doctor")
 public class DoctorController extends BaseController {
     @PostMapping("/register-doctor")
-    public BaseResponse<Boolean> registerDoctor(DoctorRegistrationRequest request) {
+    public BaseResponse<Boolean> registerDoctor(@RequestBody  DoctorRegistrationRequest request) {
         try {
             log.info("Registering doctor: {}", request.getEmail());
             Boolean result = masterService.saveDoctor(request);

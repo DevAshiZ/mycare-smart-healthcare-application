@@ -66,7 +66,6 @@ public class AuthenticationService {
                         .specialization(doctorRequest.getSpecialization())
                         .registrationNumber(doctorRequest.getRegistrationNumber())
                         .build();
-
                 doctorRepository.save(doctor);
             } else if (role == Role.PHARMACY) {
                 PharmacyRegistrationRequest pharmacyRegistrationRequest = (PharmacyRegistrationRequest) registerRequest;

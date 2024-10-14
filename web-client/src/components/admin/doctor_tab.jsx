@@ -1,6 +1,7 @@
 import {useState} from "react";
 import {Button, Card, Input, Option, Select, Typography} from "@material-tailwind/react";
-import {registerUser} from "../../services/userService.js";
+import {addNewDoctor} from "../../services/doctorService.js";
+import toast from "react-hot-toast";
 
 const specializations = [
     "Cardiologist (Heart Specialist)",
@@ -96,7 +97,14 @@ const RegisterDoctor = () => {
         });
     }
 
-    console.log(doctorRegistrationData);
+    const handleDoctorRegistration = async () => {
+        if(!doctorRegistrationData.firstName || !doctorRegistrationData.lastName || !doctorRegistrationData.email || !doctorRegistrationData.password || !doctorRegistrationData.registrationNumber || !doctorRegistrationData.specialization){
+            toast.error('Please fill all the fields');
+            return;
+        }
+        const response = await addNewDoctor(doctorRegistrationData);
+        console.log(response);
+    }
 
     return (
         <Card className={'w-full p-4'}>
@@ -120,7 +128,7 @@ const RegisterDoctor = () => {
                             <Option key={index} value={specialization}>{specialization}</Option>
                         ))}
                    </Select>
-                    <Button className={'mt-4'}>Add Doctor</Button>
+                    <Button onClick={handleDoctorRegistration} className={'mt-4'}>Add Doctor</Button>
                 </div>
                 <div className={'mr-10'}>
                     <img
