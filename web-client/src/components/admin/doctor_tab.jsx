@@ -121,7 +121,7 @@ const RegisterDoctor = () => {
                     <Input name={'email'} label={'Email'} type={'email'} onChange={handleDoctorRegistrationOnChange}/>
                     <Input name={'password'} label={'Password'} type={'password'} onChange={handleDoctorRegistrationOnChange}/>
                     <Input name={'registrationNumber'} label={'Doctor Registration Number'} onChange={handleDoctorRegistrationOnChange}/>
-                   <Select name={'specialization'} onChange={(value) =>
+                   <Select label={'Specialization'} name={'specialization'} onChange={(value) =>
                        setDoctorRegistrationData({ ...doctorRegistrationData, specialization: value })
                    }>
                         {specializations.map((specialization, index) => (

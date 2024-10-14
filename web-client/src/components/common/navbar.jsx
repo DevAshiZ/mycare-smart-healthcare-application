@@ -10,7 +10,7 @@ import {
   MenuHandler,
   MenuItem,
   MenuList,
-  IconButton, Dialog, Card, CardHeader, CardBody, Input, Checkbox, CardFooter,
+  IconButton, Dialog, Card, CardHeader, CardBody, Input, Checkbox, CardFooter, Chip,
 } from "@material-tailwind/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -74,7 +74,7 @@ function NavList() {
 export function NavigationBar() {
   const [openNav, setOpenNav] = React.useState(false);
   const { user, role } = useSelector((state) => state.auth);
-
+  const navigate = useNavigate();
   console.log(user, role);
 
   const handleWindowResize = () =>
@@ -105,9 +105,11 @@ export function NavigationBar() {
 
         <div className="flex gap-2">
           {user ? (
-              <div>
-                <div>
-                  <Typography variant="h6" color="blue-gray"> {user.role} </Typography>
+              <div className={'flex gap-4 items-center'}>
+                <div onClick={()=>navigate('/admin/*')}>
+                  {
+                      role === "ADMIN" && <Button size={"sm"} color={"orange"}> ADMIN DASHBOARD </Button>
+                  }
                 </div>
                 <ProfileMenu />
               </div>)  :
@@ -309,7 +311,7 @@ function LoginBtn() {
             size="xl"
             open={RegisterOpen}
             handler={handleRegisterOpen}
-            className="bg-transparent shadow-none flex justify-center items-center"
+            className="bg-transparent shadow-none flex justify-center items-center backdrop-blur-none"
         >
           <Card className="mx-auto flex-row w-full">
             <CardHeader
