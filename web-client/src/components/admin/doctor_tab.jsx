@@ -1,5 +1,6 @@
 import {useState} from "react";
 import {Button, Card, Input, Option, Select, Typography} from "@material-tailwind/react";
+import {registerUser} from "../../services/userService.js";
 
 const specializations = [
     "Cardiologist (Heart Specialist)",
@@ -78,6 +79,25 @@ export const DoctorTab = () => {
 
 
 const RegisterDoctor = () => {
+
+    const [doctorRegistrationData, setDoctorRegistrationData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        registrationNumber: '',
+        specialization: ''
+    });
+
+    const handleDoctorRegistrationOnChange = (e) => {
+        setDoctorRegistrationData({
+            ...doctorRegistrationData,
+            [e.target.name]: e.target.value
+        });
+    }
+
+    console.log(doctorRegistrationData);
+
     return (
         <Card className={'w-full p-4'}>
             <div className={'mb-4'}>
@@ -87,17 +107,19 @@ const RegisterDoctor = () => {
 
                 <div className={'flex flex-col gap-2 w-1/2'}>
                     <div className={'grid-cols-2 grid gap-2'}>
-                        <Input label={'First Name'}/>
-                        <Input label={'Last Name'}/>
+                        <Input name={'firstName'} label={'First Name'} onChange={handleDoctorRegistrationOnChange}/>
+                        <Input name={'lastName'} label={'Last Name'} onChange={handleDoctorRegistrationOnChange}/>
                     </div>
-                    <Input label={'Email'} type={'email'}/>
-                    <Input label={'Password'} type={'password'}/>
-                    <Input label={'Doctor Registration Number'}/>
-                    <Select>
+                    <Input name={'email'} label={'Email'} type={'email'} onChange={handleDoctorRegistrationOnChange}/>
+                    <Input name={'password'} label={'Password'} type={'password'} onChange={handleDoctorRegistrationOnChange}/>
+                    <Input name={'registrationNumber'} label={'Doctor Registration Number'} onChange={handleDoctorRegistrationOnChange}/>
+                   <Select name={'specialization'} onChange={(value) =>
+                       setDoctorRegistrationData({ ...doctorRegistrationData, specialization: value })
+                   }>
                         {specializations.map((specialization, index) => (
-                            <Option key={index}>{specialization}</Option>
+                            <Option key={index} value={specialization}>{specialization}</Option>
                         ))}
-                    </Select>
+                   </Select>
                     <Button className={'mt-4'}>Add Doctor</Button>
                 </div>
                 <div className={'mr-10'}>
