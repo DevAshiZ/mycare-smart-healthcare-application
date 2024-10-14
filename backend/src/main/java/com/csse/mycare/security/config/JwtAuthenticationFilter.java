@@ -40,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        if (path.contains("/register") || path.contains("/authenticate")) {
+        if (path.contains("/user/register") || path.contains("/user/authenticate")) {
             filterChain.doFilter(request, response); // Skip custom logic and continue
             log.trace("Skipping JWT Authentication for path: {}, request: {}", path, request);
             return;

@@ -4,6 +4,7 @@ import com.csse.mycare.admin.dto.BaseRegistrationRequest;
 import com.csse.mycare.admin.dto.DoctorRegistrationRequest;
 import com.csse.mycare.admin.dto.PharmacyRegistrationRequest;
 import com.csse.mycare.common.constants.Role;
+import com.csse.mycare.common.exceptions.UserRegistrationException;
 import com.csse.mycare.masterservice.dao.Doctor;
 import com.csse.mycare.masterservice.dao.Patient;
 import com.csse.mycare.masterservice.dao.Pharmacy;
@@ -54,7 +55,7 @@ public class AuthenticationService {
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
 
-    public Boolean registerWithRole(BaseRegistrationRequest registerRequest, Role role) {
+    public Boolean registerWithRole(BaseRegistrationRequest registerRequest, Role role) throws UserRegistrationException {
         try {
             if (role == Role.DOCTOR) {
                 DoctorRegistrationRequest doctorRequest = (DoctorRegistrationRequest) registerRequest;
@@ -88,7 +89,7 @@ public class AuthenticationService {
             }
         } catch (Exception e) {
             log.error("Error registering user: {}", e.getMessage());
-            return false;
+            throw new UserRegistrationException();
         }
 
         log.info("{} registered successfully: {}", role, registerRequest.getEmail());
