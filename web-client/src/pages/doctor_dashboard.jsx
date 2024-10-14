@@ -37,6 +37,13 @@ const PATIENTS = [
         age: 33,
     },
 ]
+const TABLE_HEADERS = [
+    'Medication Name',
+    'Dosage',
+    'Frequency',
+    'Duration',
+    'Instructions'
+]
 
 export const DoctorDashboard = () => {
     const [medicines, setMedicines] = useState([]);
@@ -67,11 +74,11 @@ export const DoctorDashboard = () => {
 const MainContent = ({medicines, setMedicines, selectedPatient, setSelectedPatient}) => {
     const [selectedTab, setSelectedTab] = useState('prescription')
     return(
-        <Card className={'p-4 h-screen'}>
+        <Card className={'p-4 h-full'}>
             {/*tab navigation*/}
             <div className={'mt-2 flex flex-row gap-4'}>
                 <Typography onClick={()=>setSelectedTab('prescription')} className={`pb-2 text-sm font-semibold text-gray-800 hover:text-green-400 ${selectedTab === 'prescription' && 'border-b-4 border-green-400 text-green-400'}`}>Create Prescription</Typography>
-                <Typography onClick={()=>setSelectedTab('patient-history')} className={`pb-2 text-sm font-semibold text-gray-800 hover:text-green-400 ${selectedTab === 'patient-history' && 'border-b-4 border-green-400 text-green-400'}`}>View Patient History</Typography>
+                <Typography onClick={()=>setSelectedTab('patient-history')} className={`pb-2 text-sm font-semibold text-gray-800 hover:text-green-400 ${selectedTab === 'patient-history' && 'border-b-4 border-green-400 text-green-400'}`}>View Appointments</Typography>
             </div>
             {/*tab content*/}
             <div>
@@ -195,11 +202,12 @@ const PrescriptionList = ({medicines}) => {
                 <table className="w-full min-w-max table-auto text-left">
                     <thead>
                     <tr className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
-                        <td className="leading-none opacity-80 p-2 text-gray-900 text-sm">Medication Name</td>
-                        <td className="leading-none opacity-80 p-2 text-gray-900 text-sm">Dosage</td>
-                        <td className="leading-none opacity-80 p-2 text-gray-900 text-sm">Frequency</td>
-                        <td className="leading-none opacity-80 p-2 text-gray-900 text-sm">Duration</td>
-                        <td className="leading-none opacity-80 p-2 text-gray-900 text-sm">Instructions</td>
+                        {TABLE_HEADERS.map((header, index) => {
+                            return (
+                                <td key={index} className="leading-none opacity-80 p-2 text-gray-900 text-sm">{header}</td>
+                            )
+                        }
+                        )}
                     </tr>
                     </thead>
                     <tbody>
@@ -227,7 +235,7 @@ const Patients = ({selectedPatient, setSelectedPatient}) => {
     return (
         <div className={'p-4 mt-4 h-full overflow-y-auto'}>
             <Typography className={'text-gray-800 font-semibold mb-2'}>Patient History</Typography>
-            <div className={'h-full overflow-y-auto'}>
+            <div className={'h-96 overflow-y-auto'}>
                 {PATIENTS.map((patient, index) => {
                     return (
                         <div key={index}
@@ -259,7 +267,7 @@ const Patients = ({selectedPatient, setSelectedPatient}) => {
 
 
 PrescriptionList.propTypes = {
-    medicines: PropTypes.array.isRequired
+    medicines: PropTypes.array.isRequired,
 };
 
 Prescription.propTypes = {
@@ -269,8 +277,9 @@ Prescription.propTypes = {
 
 MainContent.propTypes = {
     medicines: PropTypes.array.isRequired,
-    setMedicines: PropTypes.func.isRequired
-
+    setMedicines: PropTypes.func.isRequired,
+    setSelectedPatient: PropTypes.func.isRequired,
+    selectedPatient: PropTypes.object
 };
 
 MedicineForm.propTypes = {

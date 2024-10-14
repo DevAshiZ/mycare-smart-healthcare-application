@@ -46,12 +46,12 @@ export const PaymentPage = () => {
                 <div className={'flex gap-4 mb-5'}>
                     <Typography
                         onClick={()=> setPaymentMethod('card')}
-                        className={`mt-2 text-xs  cursor-pointer hover:border-b-2 hover:border-green-400 hover:text-green-400 hover:font-semibold ${paymentMethod === 'card' && 'border-b-4 border-green-400 '}`}>
+                        className={`mt-2 text-xs font-semibold  cursor-pointer hover:border-b-4 hover:border-green-400 hover:text-green-400 hover:font-semibold ${paymentMethod === 'card' && 'border-b-4 border-green-400 '}`}>
                         Card Payment
                     </Typography>
                     <Typography
                         onClick={()=> setPaymentMethod('cash')}
-                        className={`mt-2 text-xs  cursor-pointer hover:border-b-2 hover:border-green-400 hover:text-green-400 hover:font-semibold ${paymentMethod === 'cash' && 'border-b-4 border-green-400 '}`}>
+                        className={`mt-2 text-xs font-semibold cursor-pointer hover:border-b-4 hover:border-green-400 hover:text-green-400 hover:font-semibold ${paymentMethod === 'cash' && 'border-b-4 border-green-400 '}`}>
                         Cash Payment
                     </Typography>
                 </div>
