@@ -2,14 +2,15 @@ import {BrowserRouter, Route, Routes, useLocation} from "react-router-dom";
 import Home from "./pages/home.jsx";
 import {NavigationBar} from "./components/common/navbar.jsx";
 import {Footer} from "./components/common/footer.jsx";
-import {Dashboard} from "./pages/dashboard.jsx";
 import {PrivateRoute} from "./services/privateRoute.jsx";
 import AlertComponent from "./components/utils/alertComponent.jsx";
-import {DoctorDashboard} from "./pages/doctor_dashboard.jsx";
+import {DoctorProfile} from "./pages/doctor_profile.jsx";
 import {Profile} from "./pages/profile.jsx";
-import AdminDashboard from "./pages/AdminDashboard.jsx";
+import Admin_dashboard from "./pages/admin_dashboard.jsx";
 import {Toaster} from "react-hot-toast";
 import {PaymentPage} from "./pages/payment.jsx";
+import {PatientDashboard} from "./pages/dashboard.jsx";
+import {DoctorDashboard} from "./pages/doctor_dashboard.jsx";
 
 function AppContent() {
     const location = useLocation();
@@ -26,11 +27,12 @@ function AppContent() {
             <Routes>
                 <Route path="/" element={<Home/>}/>
                 <Route element={<PrivateRoute/>}>
-                    <Route path="/dashboard" element={<Dashboard/>}/>
-                    <Route path="/doc" element={<DoctorDashboard/>}/>
+                    <Route path="/dashboard" element={<PatientDashboard/>}/>
+                    <Route path="/doc" element={<DoctorProfile/>}/>
                     <Route path="/profile" element={<Profile/>}/>
-                    <Route path="/admin/*" element={<AdminDashboard/>}/>
+                    <Route path="/admin/*" element={<Admin_dashboard/>}/>
                     <Route path="/payment" element={<PaymentPage/>}/>
+                    <Route path="/doctor/dashboard" element={<DoctorDashboard/>}/>
 
                 </Route>
             </Routes>

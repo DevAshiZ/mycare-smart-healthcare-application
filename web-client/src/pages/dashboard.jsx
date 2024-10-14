@@ -76,7 +76,7 @@ const DOCTORS = [
     },
 ];
 
-export const Dashboard = () => {
+export const PatientDashboard = () => {
     return (
         <div>
             <DashboardHeader/>
