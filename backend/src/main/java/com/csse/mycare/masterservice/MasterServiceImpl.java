@@ -5,6 +5,8 @@ import com.csse.mycare.admin.dto.PharmacyRegistrationRequest;
 import com.csse.mycare.common.CalendarUtil;
 import com.csse.mycare.common.constants.Role;
 import com.csse.mycare.common.exceptions.InvalidAppointmentTimeException;
+import com.csse.mycare.common.exceptions.UserAlreadyExistsException;
+import com.csse.mycare.common.exceptions.UserRegistrationException;
 import com.csse.mycare.masterservice.dao.Appointment;
 import com.csse.mycare.masterservice.dao.Doctor;
 import com.csse.mycare.masterservice.service.AppointmentService;
@@ -93,7 +95,7 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    public Boolean saveDoctor(DoctorRegistrationRequest doctor) {
+    public Boolean saveDoctor(DoctorRegistrationRequest doctor) throws UserAlreadyExistsException {
         return authenticationService.registerWithRole(doctor, Role.DOCTOR);
     }
 
@@ -113,7 +115,7 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    public Boolean savePharmacy(PharmacyRegistrationRequest pharmacy) {
+    public Boolean savePharmacy(PharmacyRegistrationRequest pharmacy) throws UserAlreadyExistsException {
         return authenticationService.registerWithRole(pharmacy, Role.PHARMACY);
     }
 

@@ -3,6 +3,7 @@ package com.csse.mycare.admin.controller;
 import com.csse.mycare.admin.dto.DoctorRegistrationRequest;
 import com.csse.mycare.common.BaseController;
 import com.csse.mycare.common.BaseResponse;
+import com.csse.mycare.common.exceptions.UserAlreadyExistsException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,12 +16,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/admin/doctor")
 public class DoctorController extends BaseController {
     @PostMapping("/register-doctor")
-    public BaseResponse<Boolean> registerDoctor(@RequestBody  DoctorRegistrationRequest request) {
+    public BaseResponse<Boolean> registerDoctor(@RequestBody DoctorRegistrationRequest request) {
         try {
             log.info("Registering doctor: {}", request.getEmail());
             Boolean result = masterService.saveDoctor(request);
-            log.info("Doctor registered successfully: {}", request.getEmail());
+            log.info("Doctor registration completed for: {}", request.getEmail());
             return new BaseResponse<>(result);
+        } catch (UserAlreadyExistsException e) {
+            log.error("Doctor registration failed for: {}", request.getEmail());
+            return new BaseResponse<>(true, true, e.getMessage());
         } catch (Exception e) {
             log.error("Error registering doctor: {}", request.getEmail(), e);
             return new BaseResponse<>(false);

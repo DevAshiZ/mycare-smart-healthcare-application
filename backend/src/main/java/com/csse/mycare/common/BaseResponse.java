@@ -1,5 +1,8 @@
 package com.csse.mycare.common;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+@JsonSerialize
 public record BaseResponse<T>(
         T data,
         Boolean success,
@@ -12,6 +15,10 @@ public record BaseResponse<T>(
 
     public BaseResponse(Boolean success) {
         this(null, success, null, null);
+    }
+
+    public BaseResponse(Boolean success, String errorCode) {
+        this(null, success, errorCode, null);
     }
 
     public BaseResponse(T data, Boolean success) {
