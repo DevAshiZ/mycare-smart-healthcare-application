@@ -18,7 +18,6 @@ import com.csse.mycare.patient.dto.DoctorAvailabilityResponse;
 import com.csse.mycare.security.service.AuthenticationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -149,6 +148,11 @@ public class MasterServiceImpl implements MasterService {
 
             previousEndTime = CalendarUtil.addMinutes(appointment.getAppointmentStart(), appointment.getDuration());
         }
+
+        if (appointments.isEmpty()) {
+            availableSlots.put(startOfDay, CalendarUtil.getDifferenceInMinutes(startOfDay, endOfDay));
+        }
+
         availabilityResponse.setFreeSlots(availableSlots);
 
         return availabilityResponse;
