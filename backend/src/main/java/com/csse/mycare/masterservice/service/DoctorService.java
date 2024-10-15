@@ -9,6 +9,8 @@ public interface DoctorService {
 
     Doctor getDoctorById(int id);
 
+    Doctor getDoctorByEmail(String email);
+
     Doctor saveDoctor(Doctor doctor);
 
     Doctor updateDoctor(Doctor doctor);
