@@ -21,7 +21,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @Slf4j
 public class TestAdmin {
@@ -37,6 +37,35 @@ public class TestAdmin {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testGetAppointmentsByScheduleAndDay() {
+        List<Appointment> appointments = new ArrayList<>();
+        Appointment appointment1 = new Appointment();
+        appointment1.setAppointmentStart(new Date());
+        appointment1.setDuration(30);
+        appointments.add(appointment1);
+
+        Appointment appointment2 = new Appointment();
+        appointment2.setAppointmentStart(new Date());
+        appointment2.setDuration(30);
+        appointments.add(appointment2);
+
+        when(appointmentService.getAppointmentsByScheduleAndDay(anyInt(), any(Date.class))).thenReturn(appointments);
+
+        List<Appointment> result = masterService.getAppointmentsByScheduleAndDay(1, new Date());
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        log.info("Appointments are not null and size is correct");
+
+        int appointmentTime = 0;
+        for (Appointment appointment : appointments) {
+            appointmentTime += appointment.getDuration();
+        }
+        assertEquals(60, appointmentTime);
+
+        log.info("Successfully executed the test case: Get Appointments By Schedule And Day");
     }
 
     @Test
@@ -80,7 +109,6 @@ public class TestAdmin {
 
         List<Appointment> appointments = Arrays.asList(appointment1, appointment2);
         when(masterService.getAppointmentsByScheduleAndDay(anyInt(), any(Date.class))).thenReturn(appointments);
-
         DoctorAvailabilityResponse response = masterService.getDoctorAvailableDates(request);
 
         assertNotNull(response);
@@ -99,7 +127,7 @@ public class TestAdmin {
         assertEquals(60, appointmentTime);
         log.info("Total appointment time is correct: {}", appointmentTime);
         // 1440 minutes in a day, 60 minutes for the appointment
-        assertEquals(1440 - 60, freeTime);
+        assertEquals(1440 - appointmentTime, freeTime);
         log.info("Total free time is correct: {}", freeTime);
     }
 }
