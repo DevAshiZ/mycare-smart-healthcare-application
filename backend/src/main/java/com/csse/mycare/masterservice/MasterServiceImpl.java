@@ -9,6 +9,7 @@ import com.csse.mycare.common.exceptions.UserAlreadyExistsException;
 import com.csse.mycare.common.exceptions.UserRegistrationException;
 import com.csse.mycare.masterservice.dao.Appointment;
 import com.csse.mycare.masterservice.dao.Doctor;
+import com.csse.mycare.masterservice.dao.Pharmacy;
 import com.csse.mycare.masterservice.service.AppointmentService;
 import com.csse.mycare.masterservice.service.DoctorService;
 import com.csse.mycare.masterservice.service.PatientService;
@@ -117,6 +118,17 @@ public class MasterServiceImpl implements MasterService {
     @Override
     public Boolean savePharmacy(PharmacyRegistrationRequest pharmacy) throws UserAlreadyExistsException {
         return authenticationService.registerWithRole(pharmacy, Role.PHARMACY);
+    }
+
+    /**
+     * Get all pharmacies
+     * @return List of pharmacies
+     */
+    @Override
+    public List<Pharmacy> getAllPharmacies() {
+        List<Pharmacy> pharmacies = pharmacyService.getAllPharmacies();
+        pharmacies.forEach(pharmacy -> pharmacy.setPassword(null)); // Remove password from response
+        return pharmacies;
     }
 
     /**

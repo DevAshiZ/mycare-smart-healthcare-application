@@ -1,7 +1,7 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Button, Card, Input, Typography} from "@material-tailwind/react";
 import toast from "react-hot-toast";
-import {registerPharmacy} from "../../services/pharmacyService.js";
+import {getPharmacies, registerPharmacy} from "../../services/pharmacyService.js";
 
 export const PharmacyTab = () => {
 
@@ -85,9 +85,73 @@ const RegisterPharmacy = () => {
 }
 
 const ViewPharmacies = () => {
+
+    const TABLE_HEAD = ['Pharmacy Name', 'Pharmacy Address', 'Owner Name', 'Owner Email'];
+
+    const [pharmacies, setPharmacies] = useState([]);
+
+    useEffect(() => {
+        const fetchPharmacies = async () => {
+            const response = await getPharmacies()
+            setPharmacies(response.data);
+        }
+        fetchPharmacies();
+    }, []);
     return (
-        <div>
-            pharmacy data
-        </div>
+        <Card className={'mt-4 w-full'}>
+            <table className="w-full min-w-max table-auto text-left">
+                <thead>
+                <tr>
+                    {TABLE_HEAD.map((head) => (
+                        <th
+                            key={head}
+                            className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                        >
+                            <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-normal leading-none opacity-70"
+                            >
+                                {head}
+                            </Typography>
+                        </th>
+                    ))}
+                </tr>
+                </thead>
+                <tbody>
+                {pharmacies.map((row, index) => {
+                    const isLast = index === pharmacies.length - 1;
+                    const classes = isLast
+                        ? "p-4"
+                        : "p-4 border-b border-blue-gray-50";
+
+                    return (
+                        <tr key={index}>
+                            <td className={classes}>
+                                <Typography variant="small" color="blue-gray" className="font-normal">
+                                    {row.pharmacyName}
+                                </Typography>
+                            </td>
+                            <td className={classes}>
+                                <Typography variant="small" color="blue-gray" className="font-normal">
+                                    {row.pharmacyAddress}
+                                </Typography>
+                            </td>
+                            <td className={classes}>
+                                <Typography variant="small" color="blue-gray" className="font-normal">
+                                    {row.firstName} {row.lastName}
+                                </Typography>
+                            </td>
+                            <td className={classes}>
+                                <Typography variant="small" color="blue-gray" className="font-normal">
+                                    {row.email}
+                                </Typography>
+                            </td>
+                        </tr>
+                    );
+                })}
+                </tbody>
+            </table>
+        </Card>
     )
 }

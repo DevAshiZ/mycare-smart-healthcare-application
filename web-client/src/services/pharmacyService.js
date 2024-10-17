@@ -8,10 +8,18 @@ export const registerPharmacy = async (pharmacy) => {
             {
                 loading: 'Registering pharmacy...',
                 success: 'Pharmacy registered successfully!',
-                error: 'Failed to register pharmacy'
+                error: 'Failed to register pharmacy: '
             }
         )
     }catch (e) {
         toast.error('Failed to register pharmacy: ' + e.response?.message || e.message);
+    }
+}
+
+export const getPharmacies = async () => {
+    try{
+        return await api.get('/admin/pharmacy/get-pharmacies')
+    }catch (e) {
+        toast.error('Failed to load pharmacies: ' + e.response?.message || e.message);
     }
 }

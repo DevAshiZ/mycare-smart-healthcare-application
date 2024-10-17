@@ -4,13 +4,17 @@ import com.csse.mycare.admin.dto.PharmacyRegistrationRequest;
 import com.csse.mycare.common.BaseController;
 import com.csse.mycare.common.BaseResponse;
 import com.csse.mycare.common.exceptions.UserAlreadyExistsException;
+import com.csse.mycare.masterservice.dao.Pharmacy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.List;
 
 @Controller
 @Slf4j
@@ -30,5 +34,11 @@ public class PharmacyController extends BaseController {
             log.error("Error registering Pharmacy: {}", request.getEmail(), e);
             return new ResponseEntity<>(new BaseResponse<>(false, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/get-pharmacies")
+    public ResponseEntity<List<Pharmacy>> getAllPharmacies() {
+        log.info("Getting all pharmacies");
+        return new ResponseEntity<>(masterService.getAllPharmacies(), HttpStatus.OK);
     }
 }

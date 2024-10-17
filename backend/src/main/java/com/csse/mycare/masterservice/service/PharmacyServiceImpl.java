@@ -5,6 +5,8 @@ import com.csse.mycare.masterservice.repository.PharmacyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PharmacyServiceImpl implements PharmacyService {
     PharmacyRepository pharmacyRepository;
@@ -32,5 +34,10 @@ public class PharmacyServiceImpl implements PharmacyService {
     @Override
     public Pharmacy getPharmacyById(Integer id) {
         return pharmacyRepository.getReferenceById(id);
+    }
+
+    @Override
+    public List<Pharmacy> getAllPharmacies() {
+        return pharmacyRepository.findAll();
     }
 }

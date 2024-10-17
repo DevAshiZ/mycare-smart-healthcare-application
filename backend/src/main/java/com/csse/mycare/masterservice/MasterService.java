@@ -7,6 +7,7 @@ import com.csse.mycare.common.exceptions.UserAlreadyExistsException;
 import com.csse.mycare.common.exceptions.UserRegistrationException;
 import com.csse.mycare.masterservice.dao.Appointment;
 import com.csse.mycare.masterservice.dao.Doctor;
+import com.csse.mycare.masterservice.dao.Pharmacy;
 import com.csse.mycare.patient.dto.AppointmentRequest;
 import com.csse.mycare.patient.dto.AppointmentResponse;
 import com.csse.mycare.patient.dto.DoctorAvailabilityRequest;
@@ -48,6 +49,8 @@ public interface MasterService {
 
     // Pharmacy
     public Boolean savePharmacy(PharmacyRegistrationRequest pharmacy) throws UserRegistrationException, UserAlreadyExistsException;
+    public List<Pharmacy> getAllPharmacies();
+
 
     // Standalone Methods
     public DoctorAvailabilityResponse getDoctorAvailableDates(DoctorAvailabilityRequest request);
