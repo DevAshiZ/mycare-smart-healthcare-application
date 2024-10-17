@@ -26,3 +26,19 @@ export const createSchedule = async (schedule) => {
         console.log(error);
     }
 }
+
+export const getSchedulesByDate = async (day) => {
+    try{
+        const response = await api.get(`/admin/schedule/get-schedules-by-day?day=${day}`);
+        return response.data;
+    }catch (error) {
+        toast.error(ERRORS.SCHEDULE_GET_ERROR , {
+            style: {
+                borderRadius: '10px',
+                background: '#333',
+                color: '#fff',
+            }
+        })
+        console.log(error);
+    }
+}

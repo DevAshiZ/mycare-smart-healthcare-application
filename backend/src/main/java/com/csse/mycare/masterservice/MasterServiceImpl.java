@@ -142,6 +142,11 @@ public class MasterServiceImpl implements MasterService {
         return scheduleService.saveSchedule(schedule);
     }
 
+    @Override
+    public List<Schedule> getSchedulesByDay(String day) {
+        return scheduleService.getSchedulesByDay(day);
+    }
+
     /**
      * Get available slots for a doctor on a given date
      * The availability is as follows. The start of the available time is the key

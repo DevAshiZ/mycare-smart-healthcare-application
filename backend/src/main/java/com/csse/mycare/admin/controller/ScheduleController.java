@@ -8,9 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @Slf4j
@@ -29,4 +27,19 @@ public class ScheduleController extends BaseController {
             return new ResponseEntity<>(new BaseResponse<>(false, e.getMessage()), HttpStatus.OK);
         }
     }
+
+
+    @GetMapping("/get-schedules-by-day")
+    public ResponseEntity<BaseResponse<Iterable<Schedule>>> getSchedulesByDay(@RequestParam String day) {
+        try {
+            log.info("Getting schedules for day: {}", day);
+            Iterable<Schedule> result = masterService.getSchedulesByDay(day);
+            log.info("Schedules fetched for day: {}", day);
+            return new ResponseEntity<>(new BaseResponse<>(result), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error fetching schedules for day: {}", day, e);
+            return new ResponseEntity<>(new BaseResponse<>(false, e.getMessage()), HttpStatus.OK);
+        }
+    }
+
 }

@@ -7,6 +7,7 @@ const ERRORS = {
     'ADD_DOCTOR_ERROR': 'Error adding new doctor',
     'GET_DOCTORS_ERROR': 'Error fetching doctors',
     'SCHEDULE_ADD_ERROR': 'Error adding schedule',
+    'SCHEDULE_GET_ERROR': 'Error fetching schedules',
 }
 
 Object.freeze(ERRORS);

@@ -45,4 +45,9 @@ public class ScheduleServiceImpl implements ScheduleService{
     public Schedule updateSchedule(Schedule schedule) {
         return null;
     }
+
+    @Override
+    public List<Schedule> getSchedulesByDay(String day) {
+        return (scheduleRepository.getScheduleByDay(day));
+    }
 }

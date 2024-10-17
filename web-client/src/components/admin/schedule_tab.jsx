@@ -2,7 +2,8 @@ import {useEffect, useState} from "react";
 import {Button, Card, Input, Option, Select, Typography} from "@material-tailwind/react";
 import {getAllDoctors} from "../../services/doctorService.js";
 import toast from "react-hot-toast";
-import {createSchedule} from "../../services/scheduleService.js";
+import {createSchedule, getSchedulesByDate} from "../../services/scheduleService.js";
+import {formatTime} from "../../utils/helper_functions.js";
 
 const WEEKDAYS = [
     { name: "Monday", value: "MON" },
@@ -14,79 +15,7 @@ const WEEKDAYS = [
     { name: "Sunday", value: "SUN" },
 ];
 
-const TABLE_HEAD = ["Time", "Subject", "Doctor", "Room"];
-const TABLE_ROWS = [
-    {
-        Time: "09:00 AM",
-        Day: "MON",
-        Subject: "General Checkup",
-        Doctor: "Dr. Smith",
-        Room: "101",
-    },
-    {
-        Time: "10:30 AM",
-        Day: "MON",
-        Subject: "Cardiology Consultation",
-        Doctor: "Dr. Adams",
-        Room: "203",
-    },
-    {
-        Time: "11:15 AM",
-        Day: "TUE",
-        Subject: "Dermatology Follow-up",
-        Doctor: "Dr. Kim",
-        Room: "305",
-    },
-    {
-        Time: "12:00 PM",
-        Day: "WED",
-        Subject: "Pediatrics Consultation",
-        Doctor: "Dr. Williams",
-        Room: "102",
-    },
-    {
-        Time: "01:30 PM",
-        Day: "THU",
-        Subject: "Orthopedics Checkup",
-        Doctor: "Dr. Johnson",
-        Room: "204",
-    },
-    {
-        Time: "02:15 PM",
-        Day: "FRI",
-        Subject: "Neurology Exam",
-        Doctor: "Dr. Lee",
-        Room: "306",
-    },
-    {
-        Time: "03:00 PM",
-        Day: "MON",
-        Subject: "Allergy Test",
-        Doctor: "Dr. Martinez",
-        Room: "105",
-    },
-    {
-        Time: "03:45 PM",
-        Day: "TUE",
-        Subject: "Pulmonology Consultation",
-        Doctor: "Dr. Brown",
-        Room: "207",
-    },
-    {
-        Time: "04:30 PM",
-        Day: "WED",
-        Subject: "ENT Consultation",
-        Doctor: "Dr. Allen",
-        Room: "108",
-    },
-    {
-        Time: "05:15 PM",
-        Day: "THU",
-        Subject: "Arthritis Follow-up",
-        Doctor: "Dr. Rodriguez",
-        Room: "308",
-    },
-];
+const TABLE_HEAD = ["Doctor", "Room", "Start Time", "End Time", "Max Appointments"];
 
 export const ScheduleTab = () => {
     const [selectedTab, setSelectedTab] = useState("add-schedule");
@@ -128,11 +57,20 @@ export const ScheduleTab = () => {
 const ViewSchedule = () => {
 
     const [selectedDate, setSelectedDate] = useState("MON");
+    const [schedules, setSchedules] = useState([]);
 
-    // Filter schedules based on the selected date
-    const filteredSchedules = TABLE_ROWS.filter(
-        (row) => row.Day === selectedDate
-    );
+    useEffect(() => {
+        // Fetch schedules by date
+        const fetchSchedules = async () => {
+            const response = await getSchedulesByDate(selectedDate);
+            console.log(response.data);
+            setSchedules(response.data);
+        }
+
+        fetchSchedules();
+    }, [selectedDate]);
+
+
     return (
         <div>
             <Card className={"p-4 mt-2"}>
@@ -172,37 +110,50 @@ const ViewSchedule = () => {
                     </tr>
                     </thead>
                     <tbody>
-                    {filteredSchedules.map((row, index) => {
-                        const isLast = index === filteredSchedules.length - 1;
-                        const classes = isLast
-                            ? "p-4"
-                            : "p-4 border-b border-blue-gray-50";
+                    {schedules.length > 0 ? schedules.map((schedule, index) => {
+    const isLast = index === schedules.length - 1;
+    const classes = isLast
+        ? "p-4"
+        : "p-4 border-b border-blue-gray-50";
 
-                        return (
-                            <tr key={index}>
-                                <td className={classes}>
-                                    <Typography variant="small" color="blue-gray" className="font-normal">
-                                        {row.Time}
-                                    </Typography>
-                                </td>
-                                <td className={classes}>
-                                    <Typography variant="small" color="blue-gray" className="font-normal">
-                                        {row.Subject}
-                                    </Typography>
-                                </td>
-                                <td className={classes}>
-                                    <Typography variant="small" color="blue-gray" className="font-normal">
-                                        {row.Doctor}
-                                    </Typography>
-                                </td>
-                                <td className={classes}>
-                                    <Typography variant="small" color="blue-gray" className="font-normal">
-                                        {row.Room}
-                                    </Typography>
-                                </td>
-                            </tr>
-                        );
-                    })}
+    return (
+        <tr key={index}>
+            <td className={classes}>
+                <Typography variant="small" color="blue-gray" className="font-normal">
+                    {schedule.doctorId}
+                </Typography>
+            </td>
+            <td className={classes}>
+                <Typography variant="small" color="blue-gray" className="font-normal">
+                    {schedule.room}
+                </Typography>
+            </td>
+            <td className={classes}>
+                <Typography variant="small" color="blue-gray" className="font-normal">
+                    {formatTime(schedule.startTime)}
+                </Typography>
+            </td>
+            <td className={classes}>
+                <Typography variant="small" color="blue-gray" className="font-normal">
+                    {formatTime(schedule.endTime)}
+                </Typography>
+            </td>
+            <td className={classes}>
+                <Typography variant="small" color="blue-gray" className="font-normal">
+                    {schedule.maxAppointments}
+                </Typography>
+            </td>
+        </tr>
+    );
+}) : (
+    <tr>
+        <td colSpan={5} className="p-4">
+            <Typography variant="small" color="blue-gray" className="font-normal">
+                No schedules available
+            </Typography>
+        </td>
+    </tr>
+)}
                     </tbody>
                 </table>
             </Card>
