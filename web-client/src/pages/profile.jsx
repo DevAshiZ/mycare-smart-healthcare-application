@@ -1,6 +1,86 @@
 import {Card, Typography} from "@material-tailwind/react";
 import {useState} from "react";
 
+
+const TABLE_HEAD = ["Condition", "Date", "Doctor", "Medications"];
+
+const TABLE_ROWS = [
+    {
+        "Patient Name": "John Doe",
+        Condition: "Fever",
+        Date: "12/10/23",
+        Doctor: "Dr. Smith",
+        Medications: "Paracetamol",
+        "Follow-up Date": "19/10/23",
+        Actions: "Edit",
+    },
+    {
+        "Patient Name": "John Doe",
+        Condition: "Hypertension",
+        Date: "08/07/23",
+        Doctor: "Dr. Adams",
+        Medications: "Amlodipine",
+        "Follow-up Date": "08/08/23",
+        Actions: "Edit",
+    },
+    {
+        "Patient Name": "John Doe",
+        Condition: "Diabetes",
+        Date: "22/03/23",
+        Doctor: "Dr. Kim",
+        Medications: "Metformin",
+        "Follow-up Date": "22/04/23",
+        Actions: "Edit",
+    },
+    {
+        "Patient Name": "John Doe",
+        Condition: "Asthma",
+        Date: "15/06/23",
+        Doctor: "Dr. Williams",
+        Medications: "Albuterol Inhaler",
+        "Follow-up Date": "15/09/23",
+        Actions: "Edit",
+    },
+    {
+        "Patient Name": "John Doe",
+        Condition: "Migraine",
+        Date: "05/02/23",
+        Doctor: "Dr. Lee",
+        Medications: "Ibuprofen",
+        "Follow-up Date": "05/03/23",
+        Actions: "Edit",
+    },
+    {
+        "Patient Name": "John Doe",
+        Condition: "Allergic Reaction",
+        Date: "11/11/22",
+        Doctor: "Dr. Martinez",
+        Medications: "Antihistamine",
+        "Follow-up Date": "18/11/22",
+        Actions: "Edit",
+    },
+
+    {
+        "Patient Name": "John Doe",
+        Condition: "COVID-19",
+        Date: "14/04/21",
+        Doctor: "Dr. Allen",
+        Medications: "Rest, Vitamins",
+        "Follow-up Date": "28/04/21",
+        Actions: "Edit",
+    },
+    {
+        "Patient Name": "John Doe",
+        Condition: "Arthritis",
+        Date: "17/09/23",
+        Doctor: "Dr. Rodriguez",
+        Medications: "Ibuprofen",
+        "Follow-up Date": "17/10/23",
+        Actions: "Edit",
+    }
+];
+
+
 export const Profile = () => {
     return (
         <div className={'bg-gray-100 flex h-screen gap-4 p-4'}>
@@ -18,7 +98,7 @@ const UserDetailsSection = () => {
             <Card className={'p-4'}>
                 <div>
                     <img
-                        src={'https://img.freepik.com/free-vector/gradient-avatar-illustration_52683-142438.jpg?uid=R103831228&ga=GA1.1.836062334.1725166554&semt=ais_hybrid'}
+                        src={'https://th.bing.com/th/id/OIP.D9EMgYpJhawCjWVdQoG_jAHaHa?w=500&h=500&rs=1&pid=ImgDetMain'}
                         alt={'profile'} className={'rounded-lg'}/>
                 </div>
                 <div className={'mt-5 flex justify-between'}>
@@ -71,11 +151,79 @@ const UserRecordsSection = () => {
 
 const MedicalRecords = () => {
     return (
-        <div >
+        <div>
             <Typography className={'text-lg font-bold text-gray-800'}>Medical Records</Typography>
-            <div className={'mt-5'}>
-                <Typography className={'text-xs font-normal text-gray-800'}>No records found</Typography>
-            </div>
+
+            <table className="w-full min-w-max table-auto text-left">
+                <thead>
+                <tr>
+                    {TABLE_HEAD.map((head) => (
+                        <th
+                            key={head}
+                            className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                        >
+                            <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-normal leading-none opacity-70"
+                            >
+                                {head}
+                            </Typography>
+                        </th>
+                    ))}
+                </tr>
+                </thead>
+                <tbody>
+                {TABLE_ROWS.map((row, index) => {
+                    const isLast = index === TABLE_ROWS.length - 1;
+                    const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
+
+                    return (
+                        <tr key={name}>
+                            <td className={classes}>
+                                <Typography
+                                    variant="small"
+                                    color="blue-gray"
+                                    className="font-normal"
+                                >
+                                    {row.Condition}
+                                </Typography>
+                            </td>
+                            <td className={classes}>
+                                <Typography
+                                    variant="small"
+                                    color="blue-gray"
+                                    className="font-normal"
+                                >
+                                    {row.Date}
+                                </Typography>
+                            </td>
+                            <td className={classes}>
+                                <Typography
+                                    variant="small"
+                                    color="blue-gray"
+                                    className="font-normal"
+                                >
+                                    {row.Doctor}
+                                </Typography>
+                            </td>
+                            <td className={classes}>
+                                <Typography
+                                    variant="small"
+                                    color="blue-gray"
+                                    className="font-normal"
+                                >
+                                    {row.Medications}
+                                </Typography>
+                            </td>
+                        </tr>
+                    );
+                })}
+                </tbody>
+            </table>
+            {/*<div className={'mt-5'}>*/}
+            {/*    <Typography className={'text-xs font-normal text-gray-800'}>No records found</Typography>*/}
+            {/*</div>*/}
         </div>
     )
 }

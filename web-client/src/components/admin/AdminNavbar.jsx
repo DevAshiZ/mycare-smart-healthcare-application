@@ -16,7 +16,7 @@ import {
     faChevronDown,
     faChevronRight,
     faCog,
-    faDashboard,
+    faDashboard, faHandPaper,
     faInbox,
     faPowerOff,
 } from "@fortawesome/free-solid-svg-icons";
@@ -38,36 +38,6 @@ function AdminNavbar() {
     }
 
     return (
-        // <Sidebar className={'z-50 pt-4 text-sm h-screen fixed bg-green-500'}>
-        //     <Typography className={'p-4 text-gray-900 font-bold text-xl'}>
-        //         Admin Panel
-        //     </Typography>
-        //     <Menu>
-        //         <SubMenu label="Registration Forms">
-        //             <MenuItem
-        //                 component={<Link to={"/admin/doctor-register"} />}
-        //                 className="hover:bg-green-600 hover:text-white"
-        //             >
-        //                 Doctor
-        //             </MenuItem>
-        //             <MenuItem
-        //                 component={<Link to={"/admin/pharmacy-register"} />}
-        //                 className="hover:bg-green-600 hover:text-white"
-        //             >
-        //                 Pharmacy
-        //             </MenuItem>
-        //         </SubMenu>
-        //         <MenuItem
-        //             component={<Link to={"/admin/summary"} />}
-        //             className="hover:bg-green-600 hover:text-white"
-        //         >
-        //             Summary
-        //         </MenuItem>
-        //         <MenuItem className="hover:bg-green-600 hover:text-white !important">
-        //             Calendar
-        //         </MenuItem>
-        //     </Menu>
-        // </Sidebar>
         <div>
             <Card className="h-[calc(100vh)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
                 <div className="mb-2 p-4 flex items-center gap-2 bg-green-50 rounded-lg border-2 border-green-200">
@@ -121,6 +91,12 @@ function AdminNavbar() {
                             <FontAwesomeIcon icon={faInbox} className="h-4 w-4" />
                         </ListItemPrefix>
                         Summary
+                    </ListItem>
+                    <ListItem className={'text-sm text-gray-800'} onClick={()=> navigate("/admin/schedule")}>
+                        <ListItemPrefix>
+                            <FontAwesomeIcon icon={faHandPaper} className="h-4 w-4" />
+                        </ListItemPrefix>
+                        Schedule
                     </ListItem>
                     <ListItem className={'text-sm text-gray-800'}>
                         <ListItemPrefix>

@@ -42,16 +42,22 @@ public class SecurityConfig {
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin("*");  // Allow frontend origin
-        config.addAllowedOriginPattern("*");
+
+        // Explicitly allow the frontend origin
+        config.setAllowCredentials(true);  // Allow credentials
+        config.addAllowedOrigin("http://localhost:5173");  // Allow specific frontend origin
+
+        // You can add more origins as needed:
+        // config.addAllowedOrigin("http://example.com");
+
         config.addAllowedHeader("*");  // Allow all headers
-        config.addAllowedMethod("*");  // Allow all methods (GET, POST, etc.)
+        config.addAllowedMethod("*");  // Allow all HTTP methods (GET, POST, etc.)
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);  // Apply to all routes
         return source;
     }
+
 
     @Bean
     public CorsFilter corsFilter() {
