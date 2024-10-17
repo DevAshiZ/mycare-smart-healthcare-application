@@ -11,7 +11,7 @@ export const PharmacyTab = () => {
         <div className={'p-4 bg-gray-100 h-screen'}>
             <Card className={'p-4'}>
                 <Typography className={'text-lg text-green-500 font-semibold'}>Pharmacy Section</Typography>
-                <div className={'flex gap-2 mt-5'}>
+                <div className={'flex gap-5 mt-5'}>
                     <Typography onClick={()=>setSelectedTab('register-pharmacy')} className={`text-sm text-gray-800 font-semibold hover:text-green-400 pb-2 ${selectedTab === 'register-pharmacy' && 'border-b-4 border-green-400'}`}>Register Pharmacy</Typography>
                     <Typography onClick={()=>setSelectedTab('view-pharmacies')} className={`text-sm text-gray-800 font-semibold hover:text-green-400 pb-2 ${selectedTab === 'view-pharmacies' && 'border-b-4 border-green-400'}`}>View Pharmacies</Typography>
                 </div>

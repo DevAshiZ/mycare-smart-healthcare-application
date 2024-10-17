@@ -45,3 +45,19 @@ export const addNewDoctor = async (doctorData) => {
         console.log(error);
     }
 }
+
+export const getAllDoctors = async () => {
+    try{
+        const response = await api.get('/admin/doctor/get-all-doctors');
+        return response.data;
+    }catch (error) {
+        toast.error(ERRORS.GET_DOCTORS_ERROR , {
+            style: {
+                borderRadius: '10px',
+                background: '#333',
+                color: '#fff',
+            }
+        });
+        console.log(error);
+    }
+}

@@ -1,6 +1,6 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Button, Card, Input, Option, Select, Typography} from "@material-tailwind/react";
-import {addNewDoctor} from "../../services/doctorService.js";
+import {addNewDoctor, getAllDoctors} from "../../services/doctorService.js";
 import toast from "react-hot-toast";
 
 const specializations = [
@@ -26,36 +26,6 @@ const specializations = [
     "Anesthesiologist (Pain Management and Anesthesia Specialist)"
 ];
 
-const TABLE_HEAD = ["Name", "Job", "Employed", ""];
-
-const TABLE_ROWS = [
-    {
-        name: "John Michael",
-        job: "Manager",
-        date: "23/04/18",
-    },
-    {
-        name: "Alexa Liras",
-        job: "Developer",
-        date: "23/04/18",
-    },
-    {
-        name: "Laurent Perrier",
-        job: "Executive",
-        date: "19/09/17",
-    },
-    {
-        name: "Michael Levi",
-        job: "Developer",
-        date: "24/12/08",
-    },
-    {
-        name: "Richard Gran",
-        job: "Manager",
-        date: "04/10/21",
-    },
-];
-
 export const DoctorTab = () => {
 
     const [selectedTab, setSelectedTab] = useState('register-doctor');
@@ -65,12 +35,12 @@ export const DoctorTab = () => {
             <Card className={'p-4'}>
                 <Typography className={'text-lg text-green-500 font-semibold'}>Doctor Section</Typography>
 
-                <div className={'flex gap-2 mt-5'}>
+                <div className={'flex gap-5 mt-5'}>
                     <Typography onClick={()=>setSelectedTab('register-doctor')} className={`text-sm text-gray-800 font-semibold hover:text-green-400 pb-2 ${selectedTab === 'register-doctor' && 'border-b-4 border-green-400'}`}>Register Doctor</Typography>
                     <Typography onClick={()=>setSelectedTab('view-doctors')} className={`text-sm text-gray-800 font-semibold hover:text-green-400 pb-2 ${selectedTab === 'view-doctors' && 'border-b-4 border-green-400'}`}>View Doctors</Typography>
                 </div>
             </Card>
-            <div className={'w-full flex gap-2 mt-4'}>
+            <div className={'w-full flex gap-5 mt-4'}>
                 {selectedTab === 'register-doctor' && <RegisterDoctor/>}
                 {selectedTab === 'view-doctors' && <ViewDoctors/>}
             </div>
@@ -142,6 +112,20 @@ const RegisterDoctor = () => {
 }
 
 const ViewDoctors = () => {
+
+    const TABLE_HEAD = ["Registration Number","Name", "Specialization", "Email"];
+    const [doctors, setDoctors] = useState([{
+
+    }]);
+
+    useEffect(() => {
+        const fetchDoctors = async () => {
+            const response = await getAllDoctors();
+            setDoctors(response);
+            console.log(doctors);
+        }
+        fetchDoctors();
+    }, []);
     return (
         <Card className={'w-full p-4'}>
             <div className={'mb-4'}>
@@ -149,7 +133,7 @@ const ViewDoctors = () => {
             </div>
             <div>
                 <Card className="h-full w-full overflow-scroll">
-                    <table className="w-full min-w-max table-auto text-left">
+                    {doctors.length > 0 ? (   <table className="w-full min-w-max table-auto text-left">
                         <thead>
                         <tr>
                             {TABLE_HEAD.map((head) => (
@@ -166,32 +150,34 @@ const ViewDoctors = () => {
                         </tr>
                         </thead>
                         <tbody>
-                        {TABLE_ROWS.map(({ name, job, date }) => (
-                            <tr key={name} className="even:bg-blue-gray-50/50">
+                        {doctors.map((doctor, index)  => (
+                            <tr key={index} className="even:bg-blue-gray-50/50">
                                 <td className="p-4">
                                     <Typography variant="small" color="blue-gray" className="font-normal">
-                                        {name}
+                                        {doctor.registrationNumber || 'N/A'}
                                     </Typography>
                                 </td>
                                 <td className="p-4">
                                     <Typography variant="small" color="blue-gray" className="font-normal">
-                                        {job}
+                                        {doctor.firstName} {doctor.lastName}
                                     </Typography>
                                 </td>
                                 <td className="p-4">
                                     <Typography variant="small" color="blue-gray" className="font-normal">
-                                        {date}
+                                        {doctor.specialization}
                                     </Typography>
                                 </td>
                                 <td className="p-4">
                                     <Typography as="a" href="#" variant="small" color="blue-gray" className="font-medium">
-                                        Edit
+                                        {doctor.email}
                                     </Typography>
                                 </td>
                             </tr>
                         ))}
                         </tbody>
-                    </table>
+                    </table>) : (
+                        <Typography className={'text-gray-500'}>No Doctors Found</Typography>
+                    )}
                 </Card>
             </div>
         </Card>
