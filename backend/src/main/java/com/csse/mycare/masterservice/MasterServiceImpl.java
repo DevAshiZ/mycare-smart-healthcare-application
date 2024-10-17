@@ -2,18 +2,16 @@ package com.csse.mycare.masterservice;
 
 import com.csse.mycare.admin.dto.DoctorRegistrationRequest;
 import com.csse.mycare.admin.dto.PharmacyRegistrationRequest;
+import com.csse.mycare.admin.dto.ScheduleRequest;
 import com.csse.mycare.common.CalendarUtil;
 import com.csse.mycare.common.constants.Role;
 import com.csse.mycare.common.exceptions.InvalidAppointmentTimeException;
 import com.csse.mycare.common.exceptions.UserAlreadyExistsException;
-import com.csse.mycare.common.exceptions.UserRegistrationException;
 import com.csse.mycare.masterservice.dao.Appointment;
 import com.csse.mycare.masterservice.dao.Doctor;
 import com.csse.mycare.masterservice.dao.Pharmacy;
-import com.csse.mycare.masterservice.service.AppointmentService;
-import com.csse.mycare.masterservice.service.DoctorService;
-import com.csse.mycare.masterservice.service.PatientService;
-import com.csse.mycare.masterservice.service.PharmacyService;
+import com.csse.mycare.masterservice.dao.Schedule;
+import com.csse.mycare.masterservice.service.*;
 import com.csse.mycare.patient.dto.AppointmentRequest;
 import com.csse.mycare.patient.dto.AppointmentResponse;
 import com.csse.mycare.patient.dto.DoctorAvailabilityRequest;
@@ -34,6 +32,7 @@ public class MasterServiceImpl implements MasterService {
     PatientService patientService;
     PharmacyService pharmacyService;
     AuthenticationService authenticationService;
+    ScheduleService scheduleService;
 
     @Autowired
     public MasterServiceImpl(
@@ -41,13 +40,15 @@ public class MasterServiceImpl implements MasterService {
             DoctorService doctorService,
             PatientService patientService,
             PharmacyService pharmacyService,
-            AuthenticationService authenticationService
+            AuthenticationService authenticationService,
+            ScheduleService scheduleService
     ) {
         this.appointmentService = appointmentService;
         this.doctorService = doctorService;
         this.patientService = patientService;
         this.pharmacyService = pharmacyService;
         this.authenticationService = authenticationService;
+        this.scheduleService = scheduleService;
     }
 
     @Override
@@ -129,6 +130,16 @@ public class MasterServiceImpl implements MasterService {
         List<Pharmacy> pharmacies = pharmacyService.getAllPharmacies();
         pharmacies.forEach(pharmacy -> pharmacy.setPassword(null)); // Remove password from response
         return pharmacies;
+    }
+
+    @Override
+    public List<Schedule> getAllSchedules() {
+        return List.of();
+    }
+
+    @Override
+    public Schedule saveSchedule(ScheduleRequest schedule) {
+        return scheduleService.saveSchedule(schedule);
     }
 
     /**
