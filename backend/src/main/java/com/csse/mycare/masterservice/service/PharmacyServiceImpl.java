@@ -16,7 +16,7 @@ public class PharmacyServiceImpl implements PharmacyService {
 
     @Override
     public void savePharmacy(Pharmacy pharmacy) {
-
+        pharmacyRepository.save(pharmacy);
     }
 
     @Override

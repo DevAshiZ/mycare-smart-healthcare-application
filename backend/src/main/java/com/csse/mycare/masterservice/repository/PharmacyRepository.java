@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PharmacyRepository extends JpaRepository<Pharmacy, Integer> {
-    boolean getPharmacyByEmail(String email);
+    Pharmacy getPharmacyByEmail(String email);
 }

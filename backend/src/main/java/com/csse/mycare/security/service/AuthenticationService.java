@@ -79,7 +79,7 @@ public class AuthenticationService {
         } else if (role == Role.PHARMACY) {
             PharmacyRegistrationRequest pharmacyRegistrationRequest = (PharmacyRegistrationRequest) registerRequest;
 
-            if (pharmacyRepository.getPharmacyByEmail(pharmacyRegistrationRequest.getEmail())) {
+            if (pharmacyRepository.getPharmacyByEmail(pharmacyRegistrationRequest.getEmail()) != null) {
                 log.error("Pharmacy already exists with email: {}", pharmacyRegistrationRequest.getEmail());
                 throw new UserAlreadyExistsException("Doctor already exists with email: " + pharmacyRegistrationRequest.getEmail());
             }

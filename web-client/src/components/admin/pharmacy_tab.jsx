@@ -1,6 +1,7 @@
 import {useState} from "react";
 import {Button, Card, Input, Typography} from "@material-tailwind/react";
 import toast from "react-hot-toast";
+import {registerPharmacy} from "../../services/pharmacyService.js";
 
 export const PharmacyTab = () => {
 
@@ -27,6 +28,8 @@ export const PharmacyTab = () => {
 const RegisterPharmacy = () => {
 
     const [pharmacyRegistrationData, setPharmacyRegistrationData] = useState({
+        firstName: '',
+        lastName: '',
         email: '',
         password: '',
         pharmacyName: '',
@@ -41,12 +44,12 @@ const RegisterPharmacy = () => {
     }
 
     const handlePharmacyRegistration = async () => {
-        if(!pharmacyRegistrationData.email || !pharmacyRegistrationData.password || !pharmacyRegistrationData.pharmacyName || !pharmacyRegistrationData.pharmacyAddress){
+        if( !pharmacyRegistrationData.firstName || !pharmacyRegistrationData.lastName ||!pharmacyRegistrationData.email || !pharmacyRegistrationData.password || !pharmacyRegistrationData.pharmacyName || !pharmacyRegistrationData.pharmacyAddress){
             toast.error('Please fill all the fields');
             return;
         }
-        // const response = await addNewDoctor(pharmacyRegistrationData);
-        // console.log(response);
+        console.log(pharmacyRegistrationData);
+        await registerPharmacy(pharmacyRegistrationData);
     }
 
     return (
@@ -56,10 +59,17 @@ const RegisterPharmacy = () => {
             </div>
             <div className={'flex justify-between items-center'}>
                 <div className={'flex flex-col gap-2 w-1/2'}>
+                    <Typography className={'text-sm text-gray-800 font-semibold'}>Pharmacy Details</Typography>
                     <Input name={'pharmacyName'} label={'Pharmacy Name'} onChange={handlePharmacyOnChange}/>
+                    <Input name={'pharmacyAddress'} label={'Pharmacy Address'} onChange={handlePharmacyOnChange}/>
+                    <Typography className={'text-sm text-gray-800 font-semibold'}>Pharmacy Owner Details</Typography>
+                    <div className={'grid grid-cols-2 gap-2'}>
+                        <Input name={'firstName'} label={'First Name'} onChange={handlePharmacyOnChange}/>
+                        <Input name={'lastName'} label={'Last Name'} onChange={handlePharmacyOnChange}/>
+                    </div>
                     <Input name={'email'} label={'Email'} type={'email'} onChange={handlePharmacyOnChange}/>
                     <Input name={'password'} label={'Password'} type={'password'} onChange={handlePharmacyOnChange}/>
-                    <Input name={'pharmacyAddress'} label={'Pharmacy Address'} onChange={handlePharmacyOnChange}/>
+
 
                     <Button onClick={handlePharmacyRegistration} className={'mt-4'}>Add Pharmacy</Button>
                 </div>
