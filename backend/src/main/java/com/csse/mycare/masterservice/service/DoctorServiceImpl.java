@@ -27,6 +27,11 @@ public class DoctorServiceImpl implements DoctorService{
     }
 
     @Override
+    public Doctor getDoctorByEmail(String email) {
+        return doctorRepository.getDoctorByEmail(email);
+    }
+
+    @Override
     public Doctor saveDoctor(Doctor doctor) {
         return doctorRepository.save(doctor);
     }

@@ -30,7 +30,7 @@ public class PharmacyServiceImpl implements PharmacyService {
     }
 
     @Override
-    public void getPharmacyById(Integer id) {
-
+    public Pharmacy getPharmacyById(Integer id) {
+        return pharmacyRepository.getReferenceById(id);
     }
 }

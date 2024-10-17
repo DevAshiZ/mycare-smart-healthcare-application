@@ -1,38 +1,41 @@
 package com.csse.mycare.admin;
 
-import com.csse.mycare.common.CalendarUtil;
+import com.csse.mycare.admin.dto.DoctorRegistrationRequest;
+import com.csse.mycare.common.exceptions.UserAlreadyExistsException;
 import com.csse.mycare.masterservice.MasterServiceImpl;
-import com.csse.mycare.masterservice.dao.Appointment;
 import com.csse.mycare.masterservice.dao.Doctor;
-import com.csse.mycare.masterservice.dao.Schedule;
-import com.csse.mycare.masterservice.service.AppointmentService;
+import com.csse.mycare.masterservice.dao.Pharmacy;
 import com.csse.mycare.masterservice.service.DoctorService;
-import com.csse.mycare.patient.dto.DoctorAvailabilityRequest;
-import com.csse.mycare.patient.dto.DoctorAvailabilityResponse;
+import com.csse.mycare.masterservice.service.PharmacyService;
+import com.csse.mycare.security.service.AuthenticationService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 @Slf4j
 public class TestAdmin {
     @Mock
-    private AppointmentService appointmentService;
+    DoctorService doctorService;
 
     @Mock
-    private DoctorService doctorService;
+    PharmacyService pharmacyService;
+
+    @Mock
+    AuthenticationService authenticationService;
+
+    @Mock
+    PasswordEncoder passwordEncoder;
 
     @InjectMocks
-    private MasterServiceImpl masterService;
+    MasterServiceImpl masterService;
 
     @BeforeEach
     public void setUp() {
@@ -40,66 +43,76 @@ public class TestAdmin {
     }
 
     @Test
-    public void testGetDoctorAvailableDates_noAppointments() {
-        DoctorAvailabilityRequest request = new DoctorAvailabilityRequest();
-        request.setDoctorId(1);
-        request.setDate(new Date());
+    public void testGetDoctorById() {
+        Doctor mockDoctor = new Doctor(
+                "ornithologist",
+                "DOC002",
+                null,
+                null
+        );
 
-        Doctor doctor = new Doctor();
-        doctor.setSchedule(new Schedule());
-        when(doctorService.getDoctorById(1)).thenReturn(doctor);
-        when(appointmentService.getAppointmentsByScheduleAndDay(anyInt(), any(Date.class))).thenReturn(Collections.emptyList());
-
-        DoctorAvailabilityResponse response = masterService.getDoctorAvailableDates(request);
-
-        assertNotNull(response);
-        log.info("Response is not null");
-        assertEquals(doctor, response.getDoctor());
-        log.info("Returned Doctor is the same as the input doctor");
-        assertTrue(response.getFreeSlots().isEmpty());
-        log.info("Successfully executed the test case: No Appointments");
+        mockDoctor.setUserId(1);
+        when(doctorService.getDoctorById(1)).thenReturn(mockDoctor);
+        Doctor doctor = masterService.getDoctorById(1);
+        assertNotNull(doctor);
+        log.info("Doctor is not null");
+        assertEquals(1, doctor.getUserId());
+        log.info("Doctor ID's match.");
     }
 
     @Test
-    public void testGetDoctorAvailableDates_withAppointments() {
-        DoctorAvailabilityRequest request = new DoctorAvailabilityRequest();
-        request.setDoctorId(1);
-        request.setDate(new Date());
+    public void testGetPharmacyById() {
+        Pharmacy mockPharmacy = new Pharmacy(
+                "myPharmacy",
+                "123, Galle Road, Colombo 03"
+        );
 
-        Doctor doctor = new Doctor();
-        doctor.setSchedule(new Schedule());
-        when(doctorService.getDoctorById(1)).thenReturn(doctor);
+        mockPharmacy.setUserId(1);
+        when(pharmacyService.getPharmacyById(1)).thenReturn(mockPharmacy);
+        Pharmacy pharmacy = pharmacyService.getPharmacyById(1);
+        assertNotNull(pharmacy);
+        log.info("Doctor is not null");
+        assertEquals(1, pharmacy.getUserId());
+        log.info("Doctor ID's match.");
+    }
 
-        Appointment appointment1 = new Appointment();
-        appointment1.setAppointmentStart(CalendarUtil.addMinutes(CalendarUtil.getStartOfDay(request.getDate()), 60));
-        appointment1.setDuration(30);
+    @Test
+    public void testInsertDoctor() {
+        String email = "john.doe@john.doe.john.doe";
+        String firstName = "John";
+        String lastName = "Doe";
+        String password = "password";
+        String specialization = "ornithologist";
+        String registrationNumber = "DOC002";
+        try {
+            DoctorRegistrationRequest mockDoctor = new DoctorRegistrationRequest(
+                    firstName,
+                    lastName,
+                    email,
+                    passwordEncoder.encode(password),
+                    specialization,
+                    registrationNumber
+            );
 
-        Appointment appointment2 = new Appointment();
-        appointment2.setAppointmentStart(CalendarUtil.addMinutes(CalendarUtil.getStartOfDay(request.getDate()), 120));
-        appointment2.setDuration(30);
+            try {
+                masterService.saveDoctor(mockDoctor);
+            } catch (Exception e) {
+                log.error("Error saving doctor: {}", e.getMessage());
+            }
 
-        List<Appointment> appointments = Arrays.asList(appointment1, appointment2);
-        when(masterService.getAppointmentsByScheduleAndDay(anyInt(), any(Date.class))).thenReturn(appointments);
-
-        DoctorAvailabilityResponse response = masterService.getDoctorAvailableDates(request);
-
-        assertNotNull(response);
-        log.info("Availability Response is not null");
-        assertEquals(doctor, response.getDoctor());
-        log.info("Returned Doctor is the same as the input doctor");
-        assertFalse(response.getFreeSlots().isEmpty());
-        int appointmentTime = 0;
-        int freeTime = 1440;
-        for (Appointment appointment : appointments) {
-            appointmentTime += appointment.getDuration();
+            Doctor savedDoctor = doctorService.getDoctorByEmail(email);
+            assertNotNull(savedDoctor);
+            assertEquals(email, savedDoctor.getEmail());
+            assertEquals(firstName, savedDoctor.getFirstName());
+            assertEquals(lastName, savedDoctor.getLastName());
+            assertEquals(specialization, savedDoctor.getSpecialization());
+            assertEquals(registrationNumber, savedDoctor.getRegistrationNumber());
+            assertEquals(passwordEncoder.encode(password), savedDoctor.getPassword());
+            log.info("Doctor is saved successfully.");
+        } finally {
+            if (doctorService.getDoctorByEmail(email) != null) {
+                doctorService.deleteDoctor(doctorService.getDoctorByEmail(email).getUserId());
+            }
         }
-        for (Map.Entry<Date, Integer> entry : response.getFreeSlots().entrySet()) {
-            freeTime -= entry.getValue();
-        }
-        assertEquals(60, appointmentTime);
-        log.info("Total appointment time is correct: {}", appointmentTime);
-        // 1440 minutes in a day, 60 minutes for the appointment
-        assertEquals(1440 - 60, freeTime);
-        log.info("Total free time is correct: {}", freeTime);
     }
 }

@@ -3,6 +3,7 @@ package com.csse.mycare.admin.controller;
 import com.csse.mycare.admin.dto.PharmacyRegistrationRequest;
 import com.csse.mycare.common.BaseController;
 import com.csse.mycare.common.BaseResponse;
+import com.csse.mycare.common.exceptions.UserAlreadyExistsException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +19,15 @@ public class PharmacyController extends BaseController {
     public ResponseEntity<BaseResponse<Boolean>> registerPharmacy(PharmacyRegistrationRequest request) {
         try {
             log.info("Registering pharmacy: {}", request.getEmail());
-            Boolean result = masterService.savePharmacy(request);
+            masterService.savePharmacy(request);
             log.info("Pharmacy registered successfully: {}", request.getEmail());
             return new ResponseEntity<>(new BaseResponse<>(true), HttpStatus.OK);
+        } catch (UserAlreadyExistsException e) {
+            log.error("Pharmacy registration failed for: {}", request.getEmail());
+            return new ResponseEntity<>(new BaseResponse<>(false, e.getMessage()), HttpStatus.OK);
         } catch (Exception e) {
-            log.error("Error registering pharmacy: {}", request.getEmail(), e);
-            return new ResponseEntity<>(new BaseResponse<>(false), HttpStatus.INTERNAL_SERVER_ERROR);
+            log.error("Error registering Pharmacy: {}", request.getEmail(), e);
+            return new ResponseEntity<>(new BaseResponse<>(false, e.getMessage()), HttpStatus.OK);
         }
     }
 }

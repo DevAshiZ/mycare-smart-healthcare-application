@@ -30,4 +30,8 @@ public class Doctor extends User {
             schedule = new Schedule();
         }
     }
+
+    public Doctor(User user) {
+        super(user);
+    }
 }
