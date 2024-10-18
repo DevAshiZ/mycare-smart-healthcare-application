@@ -171,6 +171,7 @@ const MedicineForm = ({setMedicines, medicines}) => {
     )
 }
 
+
 const PrescriptionList = ({medicines}) => {
 
     const [prescription, setPrescription] = useState(

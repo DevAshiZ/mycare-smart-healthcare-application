@@ -49,7 +49,7 @@ export const addNewDoctor = async (doctorData) => {
 export const getAllDoctors = async () => {
     try{
         const response = await api.get('/admin/doctor/get-all-doctors');
-        return response.data;
+        return response.data.data;
     }catch (error) {
         toast.error(ERRORS.GET_DOCTORS_ERROR , {
             style: {

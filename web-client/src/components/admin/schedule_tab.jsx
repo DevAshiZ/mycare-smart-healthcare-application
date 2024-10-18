@@ -192,7 +192,6 @@ const AddSchedule = () => {
         const fetchDoctors = async () => {
             const response = await getAllDoctors();
             setDoctors(response);
-
         }
 
         fetchDoctors();

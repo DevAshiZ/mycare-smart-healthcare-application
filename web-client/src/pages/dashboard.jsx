@@ -163,9 +163,6 @@ function CalendarAndAppointmentSection({ selectedDoctor }) {
         maxAppointments: 0,
     });
 
-
-    console.log('SelectedSchedule: ', selectedSchedule);
-
     const [appointment, setAppointment] = React.useState({
         appointmentLength: APPOINTMENT_DURATION,
         appointmentStart: '',
@@ -182,7 +179,6 @@ function CalendarAndAppointmentSection({ selectedDoctor }) {
         }));
     }, [selectedSchedule]);
 
-    console.log('Appointment: ', appointment);
     const handleAppointmentSubmit = async () => {
         if (selectedDoctor !== null && selectedSchedule !== null) {
             setAppointment({
@@ -191,9 +187,7 @@ function CalendarAndAppointmentSection({ selectedDoctor }) {
             });
 
             if (appointment.patientId !== null && appointment.doctorId !== null) {
-                console.log('Appointment Data Sent: ', appointment);
-                const response = await createAppointment(appointment);
-                console.log(response);
+                await createAppointment(appointment);
             }
         } else {
             toast.error("Please select a doctor and a schedule to book an appointment");
@@ -269,9 +263,9 @@ function CalendarAndAppointmentSection({ selectedDoctor }) {
                             Available Appointment Schedules
                         </Typography>
                         {schedules.length > 0 ? (
-                            <div className={'flex flex-row gap-2'}>
+                            <div className={'max-h-20 overflow-y-auto mb-5 p-4 py-2'}>
                                 {schedules.map((schedule, index) => (
-                                    <div key={index} className="flex items-center gap-2 mb-4">
+                                    <div key={index} className="grid grid-cols-2 gap-2">
                                         {Array.from({ length: schedule.maxAppointments }).map((_, i) => {
                                             const newStartTime = addMinutes(schedule.startTime, i * (APPOINTMENT_DURATION + 10));
                                             return (
