@@ -8,6 +8,14 @@ export const formatTime = (time) => {
     return `${formattedHour}:${minute} ${period}`;
 };
 
+// Utility function to add minutes to a given time
+export const addMinutes = (time, minutes) => {
+    const [hour, minute] = time.split(':');
+    const date = new Date(0, 0, 0, hour, minute);
+    date.setMinutes(date.getMinutes() + minutes);
+    return date.toTimeString().slice(0, 5);
+};
+
 // Helper to get the next occurrence of the selected day
 export const getNextDay = (dayOfWeek) => {
     const dayMapping = { 'MON': 1, 'TUE': 2, 'WED': 3, 'THU': 4, 'FRI': 5, 'SAT': 6, 'SUN': 0 };

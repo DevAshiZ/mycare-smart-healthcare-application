@@ -15,7 +15,7 @@ const WEEKDAYS = [
     { name: "Sunday", value: "SUN" },
 ];
 
-const TABLE_HEAD = ["Doctor", "Room", "Start Time", "End Time", "Max Appointments"];
+const TABLE_HEAD = ["Doctor", "Room", "Start Time", "Duration", "Max Appointments"];
 
 export const ScheduleTab = () => {
     const [selectedTab, setSelectedTab] = useState("add-schedule");
@@ -134,7 +134,7 @@ const ViewSchedule = () => {
             </td>
             <td className={classes}>
                 <Typography variant="small" color="blue-gray" className="font-normal">
-                    {formatTime(schedule.endTime)}
+                    {schedule.duration}
                 </Typography>
             </td>
             <td className={classes}>
@@ -168,7 +168,7 @@ const AddSchedule = () => {
         doctorId: "",
         day: "",
         startTime: "",
-        endTime: "",
+        duration: "",
         maxAppointments: "",
         room: "",
     });
@@ -224,7 +224,7 @@ const AddSchedule = () => {
                     </Select>
                     <div className={'grid-cols-2 grid gap-2'}>
                         <Input onChange={handleInputChange} type={"time"} name={'startTime'} label={'Start Time'} />
-                        <Input onChange={handleInputChange} type={"time"} name={'endTime'} label={'End Time'} />
+                        <Input onChange={handleInputChange} type={"text"} name={'duration'} label={'Duration'} />
                     </div>
                     <Input onChange={handleInputChange} name={'room'} label={'Room'} />
                     <Input onChange={handleInputChange} name={'maxAppointments'} label={'Max Appointments'} type={'number'} />

@@ -24,64 +24,11 @@ import {DayPicker} from "react-day-picker";
 import React, {useEffect} from "react";
 import {getAllDoctors} from "../services/doctorService.js";
 import {getSchedulesByDoctor} from "../services/scheduleService.js";
-import {formatTime, getNextDay} from "../utils/helper_functions.js";
+import {formatTime, getNextDay, addMinutes} from "../utils/helper_functions.js";
 import {useSelector} from "react-redux";
 import {createAppointment} from "../services/patientService.js";
 import {APPOINTMENT_DURATION} from "../configs/applicationConfigs.js";
 import toast from "react-hot-toast";
-
-// const DOCTORS = [
-//     {
-//         name: "Dr. John Doe",
-//         specialty: "Cardiologist",
-//         rating: 4.5,
-//         reviews: 143,
-//         description:
-//             "A highly experienced cardiologist dedicated to providing expert care in diagnosing and treating heart-related conditions.",
-//         image:
-//             "https://img.freepik.com/free-photo/doctor-with-his-arms-crossed-white-background_1368-5790.jpg?uid=R103831228&ga=GA1.1.836062334.1725166554&semt=ais_hybrid",
-//     },
-//     {
-//         name: "Dr. Jane Smith",
-//         specialty: "Neurologist",
-//         rating: 4.8,
-//         reviews: 200,
-//         description:
-//             "Specialized in treating disorders of the nervous system, providing expert care for brain and spinal issues.",
-//         image:
-//             "https://img.freepik.com/free-photo/female-doctor-holding-medical-chart_23-2148966892.jpg",
-//     },
-//     {
-//         name: "Dr. Alice Brown",
-//         specialty: "Pediatrician",
-//         rating: 4.6,
-//         reviews: 180,
-//         description:
-//             "Dedicated to providing compassionate care to children, ensuring their health and well-being.",
-//         image:
-//             "https://img.freepik.com/free-photo/female-doctor-with-crossed-arms-smiling_23-2149074757.jpg",
-//     },
-//     {
-//         name: "Dr. Michael Green",
-//         specialty: "Orthopedic Surgeon",
-//         rating: 4.7,
-//         reviews: 250,
-//         description:
-//             "Expert in musculoskeletal conditions, providing advanced surgical and non-surgical treatments.",
-//         image:
-//             "https://img.freepik.com/free-photo/portrait-young-confident-doctor-wearing-glasses-holding-folder_171337-5146.jpg",
-//     },
-//     {
-//         name: "Dr. Emily White",
-//         specialty: "Dermatologist",
-//         rating: 4.9,
-//         reviews: 300,
-//         description:
-//             "Specializes in diagnosing and treating skin-related issues, offering comprehensive skincare solutions.",
-//         image:
-//             "https://img.freepik.com/free-photo/portrait-confident-doctor_1139-490.jpg",
-//     },
-// ];
 
 export const PatientDashboard = () => {
     const [selectedDoctor, setSelectedDoctor] = React.useState(null);
@@ -328,11 +275,16 @@ function CalendarAndAppointmentSection({ selectedDoctor }) {
                             <div className={'flex flex-row gap-2'}>
                                 {schedules.map((schedule, index) => (
                                     <div key={index} className="flex items-center gap-2 mb-4">
-                                        <div onClick={() => setSelectedSchedule(schedule)}>
-                                            <Typography className={'bg-green-500 p-2 rounded-full text-white text-xs hover:bg-green-700 hover:cursor-pointer'}>
-                                                {formatTime(schedule.startTime)} - {formatTime(schedule.endTime)}
-                                            </Typography>
-                                        </div>
+                                        {Array.from({ length: schedule.maxAppointments }).map((_, i) => {
+                                            const newStartTime = addMinutes(schedule.startTime, i * (APPOINTMENT_DURATION + 10));
+                                            return (
+                                                <div key={i} onClick={() => setSelectedSchedule(schedule)}>
+                                                    <Typography className={'bg-green-500 p-2 rounded-full text-white text-xs hover:bg-green-700 hover:cursor-pointer'}>
+                                                        {formatTime(newStartTime)} - {formatTime(addMinutes(newStartTime, APPOINTMENT_DURATION))}
+                                                    </Typography>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 ))}
                             </div>
@@ -343,7 +295,9 @@ function CalendarAndAppointmentSection({ selectedDoctor }) {
                         )}
                     </div>
                     <div className="grid grid-cols-1 gap-2">
-                        <Input label={selectedSchedule ? `${formatTime(selectedSchedule.startTime)} - ${formatTime(selectedSchedule.endTime)}` : 'Select An Appointment Schedule'} disabled />
+                        <Input label={selectedSchedule ? `${formatTime(selectedSchedule.startTime)} 
+                        - ${formatTime(addMinutes(selectedSchedule.startTime, APPOINTMENT_DURATION))}`
+                            : 'Select An Appointment Schedule'} disabled />
                         <Input label={selectedDoctor ? `Dr. ${selectedDoctor.firstName}` : 'Doctor Name'} disabled />
                         <Button onClick={handleAppointmentSubmit} disabled={!isScheduleAvailable} className={'bg-green-500'}>
                             Book Appointment
