@@ -45,6 +45,8 @@ public interface MasterService {
 
     // Pharmacy
     public Boolean savePharmacy(PharmacyRegistrationRequest pharmacy) throws UserRegistrationException, UserAlreadyExistsException;
+    public Pharmacy updatePharmacy(PharmacyRegistrationRequest pharmacy) throws ReferedPharmacyNotFoundException;
+    public void deletePharmacy(Integer pharmacyId);
     public List<Pharmacy> getAllPharmacies();
 
 

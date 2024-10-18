@@ -7,6 +7,7 @@ import com.csse.mycare.common.CalendarUtil;
 import com.csse.mycare.common.constants.Role;
 import com.csse.mycare.common.exceptions.AppointmentAlreadyExistsException;
 import com.csse.mycare.common.exceptions.ReferedDoctorNotFoundException;
+import com.csse.mycare.common.exceptions.ReferedPharmacyNotFoundException;
 import com.csse.mycare.common.exceptions.UserAlreadyExistsException;
 import com.csse.mycare.masterservice.dao.Appointment;
 import com.csse.mycare.masterservice.dao.Doctor;
@@ -108,6 +109,16 @@ public class MasterServiceImpl implements MasterService {
     @Override
     public Boolean savePharmacy(PharmacyRegistrationRequest pharmacy) throws UserAlreadyExistsException {
         return authenticationService.registerWithRole(pharmacy, Role.PHARMACY);
+    }
+
+    @Override
+    public Pharmacy updatePharmacy(PharmacyRegistrationRequest pharmacy) throws ReferedPharmacyNotFoundException {
+        return pharmacyService.updatePharmacy(pharmacy);
+    }
+
+    @Override
+    public void deletePharmacy(Integer pharmacyId) {
+        pharmacyService.deletePharmacy(pharmacyId);
     }
 
     /**

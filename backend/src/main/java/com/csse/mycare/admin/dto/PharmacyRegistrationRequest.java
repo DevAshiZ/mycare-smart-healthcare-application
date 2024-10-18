@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PharmacyRegistrationRequest implements BaseRegistrationRequest {
+    private Integer pharmacyId;
     private String firstName;
     private String lastName;
     private String email;
