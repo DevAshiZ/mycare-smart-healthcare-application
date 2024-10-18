@@ -20,7 +20,7 @@ public class Appointment {
     private Date appointmentStart;
     private Integer duration;
     @OneToOne(fetch = FetchType.EAGER)
-    private Schedule schedule;
+    private Doctor doctor;
     @OneToOne(fetch = FetchType.EAGER)
     private Payment payment;
     @OneToOne(fetch = FetchType.EAGER)

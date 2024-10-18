@@ -15,6 +15,7 @@ public class CalendarUtil {
     public static final String DATE_FORMAT_YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
     public static final String DATE_FORMAT_DD_MM_YYYY_HH_MM_SS = "dd-MM-yyyy HH:mm:ss";
     public static final String DATE_FORMAT_MM_DD_YYYY_HH_MM_SS = "MM-dd-yyyy HH:mm:ss";
+    public static final String ISO_DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
 
     public static Date parseDate(String dateString, String dateFormat) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
@@ -33,8 +34,7 @@ public class CalendarUtil {
     }
 
     public static Date parseISO8601Date(String dateString) throws ParseException {
-        SimpleDateFormat iso8601Formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
-        return iso8601Formatter.parse(dateString);
+        return parseDate(dateString, ISO_DATE_TIME_FORMAT);
     }
 
     public static boolean isSameDay(Date date1, Date date2) {

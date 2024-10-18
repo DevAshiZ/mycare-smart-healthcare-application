@@ -31,10 +31,6 @@ public interface MasterService {
 
     List<Appointment> getAllAppointments();
 
-    public List<Appointment> getAppointmentsBySchedule(Integer scheduleId);
-
-    public List<Appointment> getAppointmentsByScheduleAndDay(Integer scheduleId, Date date);
-
     // Doctor
     List<Doctor> getAllDoctors();
 
@@ -61,7 +57,7 @@ public interface MasterService {
     public List<Schedule> getSchedulesByDoctorId(Integer doctorId);
 
     // Standalone Methods
-    public DoctorAvailabilityResponse getDoctorAvailableDates(DoctorAvailabilityRequest request);
+    //public DoctorAvailabilityResponse getDoctorAvailableDates(DoctorAvailabilityRequest request);
 
     public AppointmentResponse createAppointmentWithDoctor(AppointmentRequest appointmentRequest) throws InvalidAppointmentTimeException, ParseException;
 }

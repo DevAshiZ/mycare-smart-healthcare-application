@@ -14,6 +14,6 @@ public class ScheduleRequest {
     private String day;
     private String room;
     private String startTime;
-    private String endTime;
+    private Integer duration;
     private String maxAppointments;
 }

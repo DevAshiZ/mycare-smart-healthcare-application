@@ -1,9 +1,6 @@
 package com.csse.mycare.masterservice.dao;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +19,7 @@ public class Doctor extends User {
     private String registrationNumber;
     @OneToOne
     private Hospital hospital;
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     private Schedule schedule;
 
     public Doctor() {

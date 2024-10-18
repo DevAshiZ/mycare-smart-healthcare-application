@@ -19,7 +19,7 @@ public class Schedule {
     private Integer doctorId;
     private String day;
     private String startTime;
-    private String endTime;
+    private Integer duration;
     private String room;
     private Integer maxAppointments;
 }

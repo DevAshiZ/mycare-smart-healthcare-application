@@ -48,18 +48,4 @@ public class AppointmentServiceImpl implements AppointmentService {
         return getAllAppointments().stream().filter(appointment -> appointment.getPatient().getUserId()
                 .equals(patientId)).toList();
     }
-
-    @Override
-    public List<Appointment> getAppointmentsBySchedule(Integer scheduleId) {
-        return getAllAppointments().stream().filter(appointment -> appointment.getSchedule().getId()
-                .equals(scheduleId)).toList();
-    }
-
-    @Override
-    public List<Appointment> getAppointmentsByScheduleAndDay(Integer scheduleId, Date date) {
-        return getAllAppointments().stream()
-                .filter(appointment -> appointment.getSchedule().getId().equals(scheduleId) &&
-                        CalendarUtil.isSameDay(appointment.getAppointmentStart(), date))
-                .toList();
-    }
 }

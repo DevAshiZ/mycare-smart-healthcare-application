@@ -2,7 +2,7 @@ package com.csse.mycare.patient.dto;
 
 public record AppointmentResponse(
         String appointmentStart,
-        String appointmentDuration,
+        Integer appointmentDuration,
         Integer patientId,
         Integer doctorId,
         Boolean isMade

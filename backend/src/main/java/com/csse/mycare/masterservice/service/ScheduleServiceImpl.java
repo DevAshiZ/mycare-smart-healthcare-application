@@ -33,7 +33,7 @@ public class ScheduleServiceImpl implements ScheduleService{
                 .doctorId(Integer.valueOf(scheduleRequest.getDoctorId()))
                 .day(scheduleRequest.getDay())
                 .startTime(scheduleRequest.getStartTime())
-                .endTime(scheduleRequest.getEndTime())
+                .duration(scheduleRequest.getDuration())
                 .room(scheduleRequest.getRoom())
                 .maxAppointments(Integer.valueOf(scheduleRequest.getMaxAppointments()))
                 .build();

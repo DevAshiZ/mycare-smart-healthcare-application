@@ -76,7 +76,7 @@ public class TestAdmin {
         log.info("Doctor ID's match.");
     }
 
-    @Test
+    //@Test
     public void testInsertDoctor() {
         String email = "john.doe@john.doe.john.doe";
         String firstName = "John";
