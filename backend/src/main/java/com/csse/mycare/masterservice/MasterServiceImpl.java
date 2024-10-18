@@ -5,6 +5,7 @@ import com.csse.mycare.admin.dto.PharmacyRegistrationRequest;
 import com.csse.mycare.admin.dto.ScheduleRequest;
 import com.csse.mycare.common.CalendarUtil;
 import com.csse.mycare.common.constants.Role;
+import com.csse.mycare.common.exceptions.AppointmentAlreadyExistsException;
 import com.csse.mycare.common.exceptions.InvalidAppointmentTimeException;
 import com.csse.mycare.common.exceptions.UserAlreadyExistsException;
 import com.csse.mycare.masterservice.dao.Appointment;
@@ -194,13 +195,17 @@ public class MasterServiceImpl implements MasterService {
      * @return AppointmentResponse
      */
     @Override
-    public AppointmentResponse createAppointmentWithDoctor(AppointmentRequest appointmentRequest) throws ParseException {
+    public AppointmentResponse createAppointmentWithDoctor(AppointmentRequest appointmentRequest) throws ParseException, AppointmentAlreadyExistsException {
         Appointment appointment = new Appointment();
         appointment.setAppointmentStart(CalendarUtil.parseISO8601Date(appointmentRequest.getAppointmentStart()));
         appointment.setDuration(appointmentRequest.getAppointmentLength());
         appointment.setDoctor(doctorService.getDoctorById(appointmentRequest.getDoctorId()));
         appointment.setPatient(patientService.getPatient(appointmentRequest.getPatientId()));
-        appointment = appointmentService.saveAppointment(appointment);
+        try {
+            appointment = appointmentService.saveAppointment(appointment);
+        } catch (Exception e) {
+            throw new AppointmentAlreadyExistsException();
+        }
 
         return new AppointmentResponse(
                 appointment.getAppointmentStart().toString(),

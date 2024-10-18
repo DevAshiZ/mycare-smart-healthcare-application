@@ -13,7 +13,8 @@ public enum ErrorCodes {
     GET_DOCTORS_ERROR("Error fetching doctors"),
     SCHEDULE_ADD_ERROR("Error adding schedule"),
     SCHEDULE_GET_ERROR("Error fetching schedules"),
-    APPOINTMENT_ADD_ERROR("Error adding appointment");
+    APPOINTMENT_ADD_ERROR("Error adding appointment"),
+    APPOINTMENT_ALREADY_EXISTS("Appointment already exists");
 
     private final String message;
 
