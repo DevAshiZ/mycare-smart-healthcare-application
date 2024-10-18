@@ -5,7 +5,6 @@ import com.csse.mycare.admin.dto.DoctorRegistrationRequest;
 import com.csse.mycare.admin.dto.PharmacyRegistrationRequest;
 import com.csse.mycare.common.constants.Role;
 import com.csse.mycare.common.exceptions.UserAlreadyExistsException;
-import com.csse.mycare.common.exceptions.UserRegistrationException;
 import com.csse.mycare.masterservice.dao.Doctor;
 import com.csse.mycare.masterservice.dao.Patient;
 import com.csse.mycare.masterservice.dao.Pharmacy;

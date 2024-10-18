@@ -18,7 +18,7 @@ export const registerPharmacy = async (pharmacy) => {
 
 export const getPharmacies = async () => {
     try{
-        return await api.get('/admin/pharmacy/get-pharmacies')
+        return await api.get('/admin/pharmacy/get-all-pharmacies')
     }catch (e) {
         toast.error('Failed to load pharmacies: ' + e.response?.message || e.message);
     }

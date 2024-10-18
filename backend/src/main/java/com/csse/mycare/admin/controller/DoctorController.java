@@ -17,8 +17,7 @@ import java.util.List;
 
 import static com.csse.mycare.common.ErrorCodes.DOCTOR_ALREADY_EXISTS;
 import static com.csse.mycare.common.ErrorCodes.UNKNOWN_ERROR;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
 @Controller
@@ -30,7 +29,7 @@ public class DoctorController extends BaseController {
             log.info("Registering doctor: {}", request.getEmail());
             Boolean result = masterService.saveDoctor(request);
             log.info("Doctor registration completed for: {}", request.getEmail());
-            return new ResponseEntity<>(new BaseResponse<>(result), OK);
+            return new ResponseEntity<>(new BaseResponse<>(result), CREATED);
         } catch (UserAlreadyExistsException e) {
             log.error("Doctor registration failed for: {}", request.getEmail());
             return new ResponseEntity<>(new BaseResponse<>(DOCTOR_ALREADY_EXISTS), INTERNAL_SERVER_ERROR);
