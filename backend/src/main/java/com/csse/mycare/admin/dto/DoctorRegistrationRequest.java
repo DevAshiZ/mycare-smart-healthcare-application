@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DoctorRegistrationRequest implements BaseRegistrationRequest {
+    private Integer doctorId;
     private String firstName;
     private String lastName;
     private String email;
