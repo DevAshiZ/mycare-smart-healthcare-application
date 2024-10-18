@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import static com.csse.mycare.common.ErrorCodes.UNKNOWN_ERROR;
+import static com.csse.mycare.common.constants.ErrorCodes.UNKNOWN_ERROR;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 

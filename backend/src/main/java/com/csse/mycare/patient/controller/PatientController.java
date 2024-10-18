@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
-import static com.csse.mycare.common.ErrorCodes.*;
+import static com.csse.mycare.common.constants.ErrorCodes.*;
 import static org.springframework.http.HttpStatus.OK;
 
 @Slf4j

@@ -1,5 +1,6 @@
 package com.csse.mycare.common;
 
+import com.csse.mycare.common.constants.ErrorCodes;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonSerialize

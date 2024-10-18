@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
-import static com.csse.mycare.common.ErrorCodes.UNKNOWN_ERROR;
+import static com.csse.mycare.common.constants.ErrorCodes.UNKNOWN_ERROR;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.OK;
 

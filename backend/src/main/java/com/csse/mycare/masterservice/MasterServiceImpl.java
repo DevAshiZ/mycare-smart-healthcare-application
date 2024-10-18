@@ -9,10 +9,7 @@ import com.csse.mycare.common.exceptions.AppointmentAlreadyExistsException;
 import com.csse.mycare.common.exceptions.ReferedDoctorNotFoundException;
 import com.csse.mycare.common.exceptions.ReferedPharmacyNotFoundException;
 import com.csse.mycare.common.exceptions.UserAlreadyExistsException;
-import com.csse.mycare.masterservice.dao.Appointment;
-import com.csse.mycare.masterservice.dao.Doctor;
-import com.csse.mycare.masterservice.dao.Pharmacy;
-import com.csse.mycare.masterservice.dao.Schedule;
+import com.csse.mycare.masterservice.dao.*;
 import com.csse.mycare.masterservice.service.*;
 import com.csse.mycare.patient.dto.AppointmentRequest;
 import com.csse.mycare.patient.dto.AppointmentResponse;
@@ -33,6 +30,7 @@ public class MasterServiceImpl implements MasterService {
     PharmacyService pharmacyService;
     AuthenticationService authenticationService;
     ScheduleService scheduleService;
+    MedicineService medicineService;
 
     @Autowired
     public MasterServiceImpl(
@@ -41,7 +39,8 @@ public class MasterServiceImpl implements MasterService {
             PatientService patientService,
             PharmacyService pharmacyService,
             AuthenticationService authenticationService,
-            ScheduleService scheduleService
+            ScheduleService scheduleService,
+            MedicineService medicineService
     ) {
         this.appointmentService = appointmentService;
         this.doctorService = doctorService;
@@ -49,6 +48,7 @@ public class MasterServiceImpl implements MasterService {
         this.pharmacyService = pharmacyService;
         this.authenticationService = authenticationService;
         this.scheduleService = scheduleService;
+        this.medicineService = medicineService;
     }
 
     @Override
@@ -155,6 +155,31 @@ public class MasterServiceImpl implements MasterService {
     @Override
     public List<Schedule> getSchedulesByDoctorId(Integer doctorId) {
         return scheduleService.getSchedulesByDoctorId(doctorId);
+    }
+
+    @Override
+    public List<Medicine> getAllMedicines() {
+        return medicineService.getAllMedicines();
+    }
+
+    @Override
+    public Medicine saveMedicine(Medicine medicine) {
+        return medicineService.saveMedicine(medicine);
+    }
+
+    @Override
+    public Medicine getMedicineById(Integer id) {
+        return medicineService.getMedicine(id);
+    }
+
+    @Override
+    public Medicine updateMedicine(Medicine medicine) {
+        return medicineService.updateMedicine(medicine);
+    }
+
+    @Override
+    public void deleteMedicine(Integer id) {
+        medicineService.deleteMedicine(id);
     }
 
     /**

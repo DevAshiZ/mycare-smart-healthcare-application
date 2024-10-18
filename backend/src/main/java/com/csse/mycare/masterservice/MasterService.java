@@ -4,10 +4,7 @@ import com.csse.mycare.admin.dto.DoctorRegistrationRequest;
 import com.csse.mycare.admin.dto.PharmacyRegistrationRequest;
 import com.csse.mycare.admin.dto.ScheduleRequest;
 import com.csse.mycare.common.exceptions.*;
-import com.csse.mycare.masterservice.dao.Appointment;
-import com.csse.mycare.masterservice.dao.Doctor;
-import com.csse.mycare.masterservice.dao.Pharmacy;
-import com.csse.mycare.masterservice.dao.Schedule;
+import com.csse.mycare.masterservice.dao.*;
 import com.csse.mycare.patient.dto.AppointmentRequest;
 import com.csse.mycare.patient.dto.AppointmentResponse;
 import com.csse.mycare.patient.dto.DoctorAvailabilityRequest;
@@ -55,6 +52,13 @@ public interface MasterService {
     public Schedule saveSchedule(ScheduleRequest schedule);
     public List<Schedule> getSchedulesByDay(String day);
     public List<Schedule> getSchedulesByDoctorId(Integer doctorId);
+
+    // Medicine
+    public List<Medicine> getAllMedicines();
+    public Medicine saveMedicine(Medicine medicine);
+    public Medicine getMedicineById(Integer id);
+    public Medicine updateMedicine(Medicine medicine);
+    public void deleteMedicine(Integer id);
 
     // Standalone Methods
     //public DoctorAvailabilityResponse getDoctorAvailableDates(DoctorAvailabilityRequest request);

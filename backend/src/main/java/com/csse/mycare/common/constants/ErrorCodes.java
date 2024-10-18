@@ -1,4 +1,4 @@
-package com.csse.mycare.common;
+package com.csse.mycare.common.constants;
 
 import lombok.Getter;
 
