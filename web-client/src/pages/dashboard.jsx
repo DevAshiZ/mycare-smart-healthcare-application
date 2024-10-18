@@ -24,7 +24,7 @@ import {DayPicker} from "react-day-picker";
 import React, {useEffect} from "react";
 import {getAllDoctors} from "../services/doctorService.js";
 import {getSchedulesByDoctor} from "../services/scheduleService.js";
-import {formatTime, getNextDay, addMinutes} from "../utils/helper_functions.js";
+import {formatTime,  addMinutes, getNextAppointmentDate} from "../utils/helper_functions.js";
 import {useSelector} from "react-redux";
 import {createAppointment} from "../services/patientService.js";
 import {APPOINTMENT_DURATION} from "../configs/applicationConfigs.js";
@@ -157,8 +157,14 @@ function CalendarAndAppointmentSection({ selectedDoctor }) {
     const [date, setDate] = React.useState(new Date());
     const [schedules, setSchedules] = React.useState([]);
     const [isScheduleAvailable, setIsScheduleAvailable] = React.useState(false);
-    const [selectedSchedule, setSelectedSchedule] = React.useState(null);
+    const [selectedSchedule, setSelectedSchedule] = React.useState({
+        day: '',
+        startTime: '',
+        maxAppointments: 0,
+    });
 
+
+    console.log('SelectedSchedule: ', selectedSchedule);
 
     const [appointment, setAppointment] = React.useState({
         appointmentLength: APPOINTMENT_DURATION,
@@ -167,25 +173,16 @@ function CalendarAndAppointmentSection({ selectedDoctor }) {
         doctorId: '',
     });
 
-    // Update appointment when a schedule is selected
+    // When the schedule is selected, update the appointmentStart
     React.useEffect(() => {
-        if (selectedSchedule) {
-            const appointmentDay = getNextDay(selectedSchedule.day);
-            const [hours, minutes] = selectedSchedule.startTime.split(':');
+        const nextAppointmentDate = getNextAppointmentDate(selectedSchedule);
+        setAppointment(prev => ({
+            ...prev,
+            appointmentStart: nextAppointmentDate,
+        }));
+    }, [selectedSchedule]);
 
-            // Set the time for the appointment
-            appointmentDay.setHours(hours);
-            appointmentDay.setMinutes(minutes);
-
-            // Update the appointment state
-            setAppointment(prevState => ({
-                ...prevState,
-                appointmentStart: appointmentDay.toISOString(),
-                doctorId: selectedDoctor?.userId || '',
-            }));
-        }
-    }, [selectedSchedule, selectedDoctor]);
-
+    console.log('Appointment: ', appointment);
     const handleAppointmentSubmit = async () => {
         if (selectedDoctor !== null && selectedSchedule !== null) {
             setAppointment({
@@ -278,7 +275,11 @@ function CalendarAndAppointmentSection({ selectedDoctor }) {
                                         {Array.from({ length: schedule.maxAppointments }).map((_, i) => {
                                             const newStartTime = addMinutes(schedule.startTime, i * (APPOINTMENT_DURATION + 10));
                                             return (
-                                                <div key={i} onClick={() => setSelectedSchedule(schedule)}>
+                                                <div key={i} onClick={() => setSelectedSchedule( {
+                                                    day: schedule.day,
+                                                    startTime: newStartTime,
+                                                    maxAppointments: schedule.maxAppointments,
+                                                })}>
                                                     <Typography className={'bg-green-500 p-2 rounded-full text-white text-xs hover:bg-green-700 hover:cursor-pointer'}>
                                                         {formatTime(newStartTime)} - {formatTime(addMinutes(newStartTime, APPOINTMENT_DURATION))}
                                                     </Typography>
