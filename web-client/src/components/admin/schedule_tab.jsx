@@ -20,7 +20,6 @@ const TABLE_HEAD = ["Doctor", "Room", "Start Time", "End Time", "Max Appointment
 export const ScheduleTab = () => {
     const [selectedTab, setSelectedTab] = useState("add-schedule");
 
-
     return (
         <div className={"p-4 bg-gray-100 h-screen"}>
             <Card className={"p-4"}>

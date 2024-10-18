@@ -42,4 +42,17 @@ public class ScheduleController extends BaseController {
         }
     }
 
+    @GetMapping("/get-schedules-by-doctor")
+    public ResponseEntity<BaseResponse<Iterable<Schedule>>> getSchedulesByDoctor(@RequestParam Integer doctorId) {
+        try {
+            log.info("Getting schedules for doctor: {}", doctorId);
+            Iterable<Schedule> result = masterService.getSchedulesByDoctorId(doctorId);
+            log.info("Schedules fetched for doctor: {}", doctorId);
+            return new ResponseEntity<>(new BaseResponse<>(result), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error fetching schedules for doctor: {}", doctorId, e);
+            return new ResponseEntity<>(new BaseResponse<>(false, e.getMessage()), HttpStatus.OK);
+        }
+    }
+
 }

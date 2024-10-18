@@ -147,6 +147,11 @@ public class MasterServiceImpl implements MasterService {
         return scheduleService.getSchedulesByDay(day);
     }
 
+    @Override
+    public List<Schedule> getSchedulesByDoctorId(Integer doctorId) {
+        return scheduleService.getSchedulesByDoctorId(doctorId);
+    }
+
     /**
      * Get available slots for a doctor on a given date
      * The availability is as follows. The start of the available time is the key

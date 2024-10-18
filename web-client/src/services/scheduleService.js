@@ -42,3 +42,19 @@ export const getSchedulesByDate = async (day) => {
         console.log(error);
     }
 }
+
+export const getSchedulesByDoctor = async (doctorId) => {
+    try{
+        const response = await api.get(`/admin/schedule/get-schedules-by-doctor?doctorId=${doctorId}`);
+        return response.data;
+    }catch (error) {
+        toast.error(ERRORS.SCHEDULE_GET_ERROR , {
+            style: {
+                borderRadius: '10px',
+                background: '#333',
+                color: '#fff',
+            }
+        })
+        console.log(error);
+    }
+}

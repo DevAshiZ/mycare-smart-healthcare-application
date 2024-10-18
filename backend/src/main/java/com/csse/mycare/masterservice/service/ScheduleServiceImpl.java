@@ -50,4 +50,9 @@ public class ScheduleServiceImpl implements ScheduleService{
     public List<Schedule> getSchedulesByDay(String day) {
         return (scheduleRepository.getScheduleByDay(day));
     }
+
+    @Override
+    public List<Schedule> getSchedulesByDoctorId(Integer doctorId) {
+        return (scheduleRepository.getSchedulesByDoctorId(doctorId));
+    }
 }

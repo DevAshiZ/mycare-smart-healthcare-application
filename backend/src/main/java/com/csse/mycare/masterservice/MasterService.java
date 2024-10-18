@@ -58,6 +58,7 @@ public interface MasterService {
     public List<Schedule> getAllSchedules();
     public Schedule saveSchedule(ScheduleRequest schedule);
     public List<Schedule> getSchedulesByDay(String day);
+    public List<Schedule> getSchedulesByDoctorId(Integer doctorId);
 
     // Standalone Methods
     public DoctorAvailabilityResponse getDoctorAvailableDates(DoctorAvailabilityRequest request);

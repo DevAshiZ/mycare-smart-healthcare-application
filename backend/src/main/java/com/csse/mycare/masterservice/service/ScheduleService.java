@@ -11,4 +11,5 @@ public interface ScheduleService {
 //    public List<Schedule> getSchedulesByDoctor(Integer doctorId);
     Schedule updateSchedule(Schedule schedule);
     List<Schedule> getSchedulesByDay(String day);
+    List<Schedule> getSchedulesByDoctorId(Integer doctorId);
 }

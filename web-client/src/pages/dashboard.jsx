@@ -2,7 +2,7 @@ import {
     Button,
     Card,
     CardBody,
-    CardHeader,
+    CardHeader, Chip,
     IconButton,
     Input,
     Select,
@@ -23,6 +23,7 @@ import PropTypes from "prop-types";
 import {DayPicker} from "react-day-picker";
 import React, {useEffect} from "react";
 import {getAllDoctors} from "../services/doctorService.js";
+import {getSchedulesByDoctor} from "../services/scheduleService.js";
 
 // const DOCTORS = [
 //     {
@@ -96,7 +97,7 @@ export const PatientDashboard = () => {
                 </div>
                 <div className="w-3/12">
                     {/*Calendar and Appointment*/}
-                    <CalendarAndAppointmentSection/>
+                    <CalendarAndAppointmentSection selectedDoctor={selectedDoctor}/>
 
                 </div>
             </div>
@@ -199,8 +200,38 @@ function DoctorDetailsSection({selectedDoctor}) {
     )
 }
 
-function CalendarAndAppointmentSection() {
+function CalendarAndAppointmentSection({selectedDoctor}) {
     const [date, setDate] = React.useState(new Date());
+    console.log(selectedDoctor);
+
+    const [schedules, setSchedules] = React.useState([]);
+
+    const [isScheduleAvailable, setIsScheduleAvailable] = React.useState(false);
+
+
+
+    useEffect(() => {
+        const fetchSchedules = async () => {
+            if(selectedDoctor !== null){
+                const response = await getSchedulesByDoctor(selectedDoctor.userId);
+                if(response.data.length > 0){
+                    setSchedules(response.data);
+                    setIsScheduleAvailable(true);
+                }else {
+                    setIsScheduleAvailable(false);
+                    setSchedules([]);
+                }
+            }else {
+                setSchedules([]);
+            }
+        }
+
+        fetchSchedules();
+    }, [selectedDoctor]);
+
+    console.log(schedules);
+    
+
     return (
 
         <div>
@@ -253,36 +284,29 @@ function CalendarAndAppointmentSection() {
                         <Typography variant="h6" className="font-semibold text-gray-800 mb-2">
                             Available Appointment Schedules
                         </Typography>
-
-                        <div className="mb-4">
-                            <div className="grid grid-cols-4 gap-2">
-                                <div className="flex items-center bg-blue-300 p-2 rounded-lg">
-                                    <Typography className="text-sm text-white">
-                                        10:00 AM
-                                    </Typography>
-                                </div>
-                                <div className="flex items-center bg-blue-300 p-2 rounded-lg">
-                                    <Typography className="text-sm text-white">
-                                        8:00 AM
-                                    </Typography>
-                                </div>
-                                <div className="flex items-center bg-blue-300 p-2 rounded-lg">
-                                    <Typography className="text-sm text-white">
-                                        4:00 PM
-                                    </Typography>
-                                </div>
-                                <div className="flex items-center bg-blue-300 p-2 rounded-lg">
-                                    <Typography className="text-sm text-white">
-                                        2:00 PM
-                                    </Typography>
-                                </div>
+                        { schedules.length > 0 ? (
+                            <div>
+                                {
+                                    schedules.map((schedule, index) => (
+                                        <div key={index} className="flex items-center gap-2 mb-4">
+                                            <Typography className={'bg-green-500 p-2 rounded-full text-white text-xs hover:bg-green-700 hover:cursor-pointer'}>
+                                                {schedule.startTime} - {schedule.endTime}
+                                            </Typography>
+                                        </div>
+                                    ))
+                                }
                             </div>
-                        </div>
+                        ) : (
+                            <Typography  className=" mb-4 text-xs x bg-red-500 p-2 text-white text-center">
+                                No available schedules
+                            </Typography>
+                        )}
+
                     </div>
                     <div className="grid grid-cols-1 gap-2">
                         <Input label="Appointment Time" type="time"/>
                         <Input label="Doctor Name"/>
-                        <Button style={{backgroundColor:"rgba(7,120,179,0.97)"}}>Book Appointment</Button>
+                        <Button disabled={!isScheduleAvailable} style={{backgroundColor:"rgba(7,120,179,0.97)"}}>Book Appointment</Button>
                     </div>
                 </div>
             </Card>
@@ -389,6 +413,13 @@ DoctorDetailsSection.propTypes = {
         firstName: PropTypes.string.isRequired,
         lastName: PropTypes.string.isRequired,
         specialization: PropTypes.string.isRequired,
+        userId: PropTypes.number.isRequired,
+    }),
+};
+
+CalendarAndAppointmentSection.propTypes = {
+    selectedDoctor: PropTypes.shape({
+        userId: PropTypes.number.isRequired,
     }),
 };
 
