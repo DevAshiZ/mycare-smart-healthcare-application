@@ -6,8 +6,6 @@ import com.csse.mycare.common.BaseResponse;
 import com.csse.mycare.common.exceptions.UserAlreadyExistsException;
 import com.csse.mycare.masterservice.dao.Doctor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
-import static javax.security.auth.callback.ConfirmationCallback.OK;
+import static com.csse.mycare.common.ErrorCodes.DOCTOR_ALREADY_EXISTS;
+import static com.csse.mycare.common.ErrorCodes.UNKNOWN_ERROR;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.OK;
 
 @Slf4j
 @Controller
@@ -29,21 +30,52 @@ public class DoctorController extends BaseController {
             log.info("Registering doctor: {}", request.getEmail());
             Boolean result = masterService.saveDoctor(request);
             log.info("Doctor registration completed for: {}", request.getEmail());
-            return new ResponseEntity<>(new BaseResponse<>(result), HttpStatus.OK);
+            return new ResponseEntity<>(new BaseResponse<>(result), OK);
         } catch (UserAlreadyExistsException e) {
             log.error("Doctor registration failed for: {}", request.getEmail());
-            return new ResponseEntity<>(new BaseResponse<>(false, e.getMessage()), HttpStatus.OK);
+            return new ResponseEntity<>(new BaseResponse<>(DOCTOR_ALREADY_EXISTS), INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
             log.error("Error registering doctor: {}", request.getEmail(), e);
-            return new ResponseEntity<>(new BaseResponse<>(false, e.getMessage()), HttpStatus.OK);
+            return new ResponseEntity<>(new BaseResponse<>(UNKNOWN_ERROR), INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping("/get-all-doctors")
-    public ResponseEntity<List<Doctor>> getAllDoctors(){
+    public ResponseEntity<BaseResponse<List<Doctor>>> getAllDoctors() {
         log.info("Getting all doctors");
-        List<Doctor> doctors = masterService.getAllDoctors();
+        try {
+            List<Doctor> doctors = masterService.getAllDoctors();
+            log.info("Successfully fetched doctors");
+            return new ResponseEntity<>(new BaseResponse<>(doctors), OK);
+        } catch (Exception e) {
+            log.error("Error fetching doctors", e);
+            return new ResponseEntity<>(new BaseResponse<>(UNKNOWN_ERROR), INTERNAL_SERVER_ERROR);
+        }
+    }
 
-        return new ResponseEntity<>(doctors, HttpStatus.OK);
+    @PostMapping("/update-doctor")
+    public ResponseEntity<BaseResponse<Doctor>> updateDoctor(@RequestBody DoctorRegistrationRequest request) {
+        try {
+            log.info("Updating doctor: {}", request.getEmail());
+            Doctor savedDoctor = masterService.updateDoctor(request);
+            log.info("Doctor update completed for: {}", request.getEmail());
+            return new ResponseEntity<>(new BaseResponse<>(savedDoctor), OK);
+        } catch (Exception e) {
+            log.error("Error updating doctor: {}", request.getEmail(), e);
+            return new ResponseEntity<>(new BaseResponse<>(UNKNOWN_ERROR), INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/delete-doctor")
+    public ResponseEntity<BaseResponse<Boolean>> deleteDoctor(Integer doctorId) {
+        try {
+            log.info("Deleting doctor: {}", doctorId);
+            masterService.deleteDoctor(doctorId);
+            log.info("Doctor deletion completed for: {}", doctorId);
+            return new ResponseEntity<>(new BaseResponse<>(true), OK);
+        } catch (Exception e) {
+            log.error("Error deleting doctor: {}", doctorId, e);
+            return new ResponseEntity<>(new BaseResponse<>(UNKNOWN_ERROR), INTERNAL_SERVER_ERROR);
+        }
     }
 }

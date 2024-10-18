@@ -1,5 +1,7 @@
 package com.csse.mycare.masterservice.service;
 
+import com.csse.mycare.admin.dto.DoctorRegistrationRequest;
+import com.csse.mycare.common.exceptions.ReferedDoctorNotFoundException;
 import com.csse.mycare.masterservice.dao.Doctor;
 import com.csse.mycare.masterservice.repository.DoctorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class DoctorServiceImpl implements DoctorService{
+public class DoctorServiceImpl implements DoctorService {
     private final DoctorRepository doctorRepository;
 
     @Autowired
@@ -37,8 +39,25 @@ public class DoctorServiceImpl implements DoctorService{
     }
 
     @Override
-    public Doctor updateDoctor(Doctor doctor) {
-        return doctorRepository.save(doctor);
+    public Doctor updateDoctor(DoctorRegistrationRequest doctor) throws ReferedDoctorNotFoundException {
+        try {
+            Doctor existingDoctor = doctorRepository.getReferenceById(doctor.getDoctorId());
+            if (doctor.getFirstName() != null) {
+                existingDoctor.setFirstName(doctor.getFirstName());
+            }
+            if (doctor.getLastName() != null) {
+                existingDoctor.setLastName(doctor.getLastName());
+            }
+            if (doctor.getEmail() != null) {
+                existingDoctor.setEmail(doctor.getEmail());
+            }
+            if (doctor.getSpecialization() != null) {
+                existingDoctor.setSpecialization(doctor.getSpecialization());
+            }
+            return doctorRepository.save(existingDoctor);
+        } catch (Exception e) {
+            throw new ReferedDoctorNotFoundException();
+        }
     }
 
     @Override

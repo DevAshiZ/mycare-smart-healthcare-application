@@ -5,7 +5,8 @@ import com.csse.mycare.admin.dto.PharmacyRegistrationRequest;
 import com.csse.mycare.admin.dto.ScheduleRequest;
 import com.csse.mycare.common.CalendarUtil;
 import com.csse.mycare.common.constants.Role;
-import com.csse.mycare.common.exceptions.InvalidAppointmentTimeException;
+import com.csse.mycare.common.exceptions.AppointmentAlreadyExistsException;
+import com.csse.mycare.common.exceptions.ReferedDoctorNotFoundException;
 import com.csse.mycare.common.exceptions.UserAlreadyExistsException;
 import com.csse.mycare.masterservice.dao.Appointment;
 import com.csse.mycare.masterservice.dao.Doctor;
@@ -14,15 +15,13 @@ import com.csse.mycare.masterservice.dao.Schedule;
 import com.csse.mycare.masterservice.service.*;
 import com.csse.mycare.patient.dto.AppointmentRequest;
 import com.csse.mycare.patient.dto.AppointmentResponse;
-import com.csse.mycare.patient.dto.DoctorAvailabilityRequest;
-import com.csse.mycare.patient.dto.DoctorAvailabilityResponse;
 import com.csse.mycare.security.service.AuthenticationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
-import java.util.*;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -92,7 +91,7 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
-    public Doctor updateDoctor(Doctor doctor) {
+    public Doctor updateDoctor(DoctorRegistrationRequest doctor) throws ReferedDoctorNotFoundException {
         return doctorService.updateDoctor(doctor);
     }
 
@@ -113,6 +112,7 @@ public class MasterServiceImpl implements MasterService {
 
     /**
      * Get all pharmacies
+     *
      * @return List of pharmacies
      */
     @Override
@@ -132,7 +132,7 @@ public class MasterServiceImpl implements MasterService {
         Doctor doctor = doctorService.getDoctorById(Integer.parseInt(schedule.getDoctorId()));
         Schedule savedSchedule = scheduleService.saveSchedule(schedule);
         doctor.setSchedule(savedSchedule);
-        doctorService.updateDoctor(doctor);
+        doctorService.saveDoctor(doctor);
         return savedSchedule;
     }
 
@@ -147,60 +147,23 @@ public class MasterServiceImpl implements MasterService {
     }
 
     /**
-     * Get available slots for a doctor on a given date
-     * The availability is as follows. The start of the available time is the key
-     * and the value is the duration in minutes for where the doctor is available
-     *
-     * @param request DoctorAvailabilityRequest
-     * @return DoctorAvailabilityResponse
-     */
-//    @Override
-//    public DoctorAvailabilityResponse getDoctorAvailableDates(DoctorAvailabilityRequest request) {
-//        List<Appointment> appointments = getAppointmentsByScheduleAndDay(
-//                doctorService.getDoctorById(request.getDoctorId()).getSchedule().getId(), request.getDate());
-//        DoctorAvailabilityResponse availabilityResponse = new DoctorAvailabilityResponse();
-//        Map<Date, Integer> availableSlots = new HashMap<>();
-//
-//        appointments.sort(Comparator.comparing(Appointment::getAppointmentStart));
-//        availabilityResponse.setDoctor(doctorService.getDoctorById(request.getDoctorId()));
-//
-//        Date startOfDay = CalendarUtil.getStartOfDay(request.getDate());
-//        Date endOfDay = CalendarUtil.getEndOfDay(request.getDate());
-//
-//        Date previousEndTime = startOfDay;
-//
-//        for (Appointment appointment : appointments) {
-//            if (appointment.getAppointmentStart().after(previousEndTime) && appointment.getAppointmentStart().before(endOfDay)) {
-//                availableSlots.put(previousEndTime, CalendarUtil.getDifferenceInMinutes(previousEndTime,
-//                        appointment.getAppointmentStart()));
-//            }
-//
-//            previousEndTime = CalendarUtil.addMinutes(appointment.getAppointmentStart(), appointment.getDuration());
-//        }
-//
-//        if (appointments.isEmpty()) {
-//            availableSlots.put(startOfDay, CalendarUtil.getDifferenceInMinutes(startOfDay, endOfDay));
-//        }
-//
-//        availabilityResponse.setFreeSlots(availableSlots);
-//
-//        return availabilityResponse;
-//    }
-
-    /**
      * Create an appointment with a doctor
      *
      * @param appointmentRequest AppointmentRequest
      * @return AppointmentResponse
      */
     @Override
-    public AppointmentResponse createAppointmentWithDoctor(AppointmentRequest appointmentRequest) throws ParseException {
+    public AppointmentResponse createAppointmentWithDoctor(AppointmentRequest appointmentRequest) throws ParseException, AppointmentAlreadyExistsException {
         Appointment appointment = new Appointment();
         appointment.setAppointmentStart(CalendarUtil.parseISO8601Date(appointmentRequest.getAppointmentStart()));
         appointment.setDuration(appointmentRequest.getAppointmentLength());
         appointment.setDoctor(doctorService.getDoctorById(appointmentRequest.getDoctorId()));
         appointment.setPatient(patientService.getPatient(appointmentRequest.getPatientId()));
-        appointment = appointmentService.saveAppointment(appointment);
+        try {
+            appointment = appointmentService.saveAppointment(appointment);
+        } catch (Exception e) {
+            throw new AppointmentAlreadyExistsException();
+        }
 
         return new AppointmentResponse(
                 appointment.getAppointmentStart().toString(),

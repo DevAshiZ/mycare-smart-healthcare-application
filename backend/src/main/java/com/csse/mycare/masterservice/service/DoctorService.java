@@ -1,5 +1,7 @@
 package com.csse.mycare.masterservice.service;
 
+import com.csse.mycare.admin.dto.DoctorRegistrationRequest;
+import com.csse.mycare.common.exceptions.ReferedDoctorNotFoundException;
 import com.csse.mycare.masterservice.dao.Doctor;
 
 import java.util.List;
@@ -13,7 +15,7 @@ public interface DoctorService {
 
     Doctor saveDoctor(Doctor doctor);
 
-    Doctor updateDoctor(Doctor doctor);
+    Doctor updateDoctor(DoctorRegistrationRequest doctor) throws ReferedDoctorNotFoundException;
 
     void deleteDoctor(int id);
 }

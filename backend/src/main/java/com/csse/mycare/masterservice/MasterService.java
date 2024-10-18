@@ -3,9 +3,7 @@ package com.csse.mycare.masterservice;
 import com.csse.mycare.admin.dto.DoctorRegistrationRequest;
 import com.csse.mycare.admin.dto.PharmacyRegistrationRequest;
 import com.csse.mycare.admin.dto.ScheduleRequest;
-import com.csse.mycare.common.exceptions.InvalidAppointmentTimeException;
-import com.csse.mycare.common.exceptions.UserAlreadyExistsException;
-import com.csse.mycare.common.exceptions.UserRegistrationException;
+import com.csse.mycare.common.exceptions.*;
 import com.csse.mycare.masterservice.dao.Appointment;
 import com.csse.mycare.masterservice.dao.Doctor;
 import com.csse.mycare.masterservice.dao.Pharmacy;
@@ -38,7 +36,7 @@ public interface MasterService {
 
     public Boolean saveDoctor(DoctorRegistrationRequest doctor) throws UserRegistrationException, UserAlreadyExistsException;
 
-    Doctor updateDoctor(Doctor doctor);
+    Doctor updateDoctor(DoctorRegistrationRequest doctor) throws ReferedDoctorNotFoundException;
 
     void deleteDoctor(int id);
 
@@ -59,5 +57,5 @@ public interface MasterService {
     // Standalone Methods
     //public DoctorAvailabilityResponse getDoctorAvailableDates(DoctorAvailabilityRequest request);
 
-    public AppointmentResponse createAppointmentWithDoctor(AppointmentRequest appointmentRequest) throws InvalidAppointmentTimeException, ParseException;
+    public AppointmentResponse createAppointmentWithDoctor(AppointmentRequest appointmentRequest) throws InvalidAppointmentTimeException, ParseException, AppointmentAlreadyExistsException;
 }
