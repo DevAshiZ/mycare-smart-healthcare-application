@@ -130,7 +130,7 @@ public class AuthenticationService {
         log.info("User authenticated successfully: {}", user.getEmail());
 
         // Return the token
-        return AuthenticationResponse.builder().token(jwtToken).role(user.getRole().name()).build();
+        return AuthenticationResponse.builder().token(jwtToken).role(user.getRole().name()).userId(user.getUserId().toString()).build();
     }
 
 }

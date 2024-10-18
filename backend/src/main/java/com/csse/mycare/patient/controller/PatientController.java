@@ -30,6 +30,7 @@ public class PatientController extends BaseController {
     @PostMapping("/create-appointment")
     public ResponseEntity<AppointmentResponse> createAppointment(@RequestBody AppointmentRequest appointmentRequest) {
         log.info("creating appointment for patientId: {}", appointmentRequest.getPatientId());
+        log.info("creating appointment for doctorId: {}, start: {}, length: {}, patientId: {}", appointmentRequest.getDoctorId(), appointmentRequest.getAppointmentStart(), appointmentRequest.getAppointmentLength(), appointmentRequest.getPatientId());
         try {
             return new ResponseEntity<>(masterService.createAppointmentWithDoctor(appointmentRequest), OK);
         } catch (Exception e) {

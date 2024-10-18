@@ -2,7 +2,7 @@ import {
     Button,
     Card,
     CardBody,
-    CardHeader, Chip,
+    CardHeader,
     IconButton,
     Input,
     Select,
@@ -24,6 +24,11 @@ import {DayPicker} from "react-day-picker";
 import React, {useEffect} from "react";
 import {getAllDoctors} from "../services/doctorService.js";
 import {getSchedulesByDoctor} from "../services/scheduleService.js";
+import {formatTime, getNextDay} from "../utils/helper_functions.js";
+import {useSelector} from "react-redux";
+import {createAppointment} from "../services/patientService.js";
+import {APPOINTMENT_DURATION} from "../configs/applicationConfigs.js";
+import toast from "react-hot-toast";
 
 // const DOCTORS = [
 //     {
@@ -200,119 +205,154 @@ function DoctorDetailsSection({selectedDoctor}) {
     )
 }
 
-function CalendarAndAppointmentSection({selectedDoctor}) {
+function CalendarAndAppointmentSection({ selectedDoctor }) {
+    const { userId } = useSelector((state) => state.auth);
     const [date, setDate] = React.useState(new Date());
-    console.log(selectedDoctor);
-
     const [schedules, setSchedules] = React.useState([]);
-
     const [isScheduleAvailable, setIsScheduleAvailable] = React.useState(false);
+    const [selectedSchedule, setSelectedSchedule] = React.useState(null);
 
 
+    const [appointment, setAppointment] = React.useState({
+        appointmentLength: APPOINTMENT_DURATION,
+        appointmentStart: '',
+        patientId: parseInt(userId, 10),
+        doctorId: '',
+    });
+
+    // Update appointment when a schedule is selected
+    React.useEffect(() => {
+        if (selectedSchedule) {
+            const appointmentDay = getNextDay(selectedSchedule.day);
+            const [hours, minutes] = selectedSchedule.startTime.split(':');
+
+            // Set the time for the appointment
+            appointmentDay.setHours(hours);
+            appointmentDay.setMinutes(minutes);
+
+            // Update the appointment state
+            setAppointment(prevState => ({
+                ...prevState,
+                appointmentStart: appointmentDay.toISOString(),
+                doctorId: selectedDoctor?.userId || '',
+            }));
+        }
+    }, [selectedSchedule, selectedDoctor]);
+
+    const handleAppointmentSubmit = async () => {
+        if (selectedDoctor !== null && selectedSchedule !== null) {
+            setAppointment({
+                ...appointment,
+                doctorId: selectedDoctor.userId,
+            });
+
+            if (appointment.patientId !== null && appointment.doctorId !== null) {
+                console.log('Appointment Data Sent: ', appointment);
+                const response = await createAppointment(appointment);
+                console.log(response);
+            }
+        } else {
+            toast.error("Please select a doctor and a schedule to book an appointment");
+        }
+    };
 
     useEffect(() => {
         const fetchSchedules = async () => {
-            if(selectedDoctor !== null){
+            if (selectedDoctor !== null) {
                 const response = await getSchedulesByDoctor(selectedDoctor.userId);
-                if(response.data.length > 0){
+                if (response.data.length > 0) {
                     setSchedules(response.data);
                     setIsScheduleAvailable(true);
-                }else {
+                } else {
                     setIsScheduleAvailable(false);
                     setSchedules([]);
                 }
-            }else {
+            } else {
                 setSchedules([]);
             }
-        }
-
+        };
         fetchSchedules();
     }, [selectedDoctor]);
 
-    console.log(schedules);
-    
-
     return (
-
         <div>
             <Card className="w-full h-screen p-2 items-center">
                 <Typography variant="h6" className="font-semibold text-gray-800 mt-2">
                     Select Appointment Date
                 </Typography>
-               <div className="items-center mt-10">
-                   <DayPicker
-                       mode="single"
-                       selected={date}
-                       onSelect={setDate}
-                       showOutsideDays
-                       className="border-0"
-                       classNames={{
-                           month_caption: "flex justify-center py-2 mb-4 relative items-center",
-                           caption_label: "text-sm font-medium text-gray-900",
-                           nav: "flex items-center items-center justify-between ",
-                           button_previous: "",
-                           button_next: "",
-                           table: "w-full border-collapse",
-                           weekdays: "m-0.5 w-9 font-normal text-sm text-gray-900",
-                           row: "flex w-full mt-2 items-center justify-center",
-                           cell: "text-gray-600 rounded-md h-9 w-9 text-center text-sm p-0 m-0.5 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-gray-900/20 [&:has([aria-selected].day-outside)]:text-white [&:has([aria-selected])]:bg-gray-900/50 first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
-                           day: "h-9 w-9 p-0 font-normal text-center text-sm text-gray-900 items-center justify-center",
-                           range_end: "day-range-end",
-                           selected:
-                               "rounded-md bg-gray-900 text-white hover:bg-gray-900 hover:text-white focus:bg-gray-900 focus:text-white",
-                           today: "rounded-md bg-gray-200 text-gray-900 ",
-                           outside:
-                               "day-outside text-gray-500 opacity-50 aria-selected:bg-gray-500 aria-selected:text-gray-900 aria-selected:bg-opacity-10",
-                           disabled: "text-gray-500 opacity-50",
-                           hidden: "invisible",
-                       }}
-                       components={{
-                           IconLeft: ({ ...props }) => (
-                               <FontAwesomeIcon icon={faChevronLeft} {...props} className="h-4 w-4 stroke-2" />
-                           ),
-                           IconRight: ({ ...props }) => (
-                               <FontAwesomeIcon icon={faChevronRight} {...props} className="h-4 w-4 stroke-2" />
-                           ),
-                       }}
-                   />
-               </div>
+                <div className="items-center mt-10">
+                    <DayPicker
+                        mode="single"
+                        selected={date}
+                        onSelect={setDate}
+                        showOutsideDays
+                        className="border-0"
+                        classNames={{
+                            month_caption: "flex justify-center py-2 mb-4 relative items-center",
+                            caption_label: "text-sm font-medium text-gray-900",
+                            nav: "flex items-center justify-between ",
+                            button_previous: "",
+                            button_next: "",
+                            table: "w-full border-collapse",
+                            weekdays: "m-0.5 w-9 font-normal text-sm text-gray-900",
+                            row: "flex w-full mt-2 items-center justify-center",
+                            cell: "text-gray-600 rounded-md h-9 w-9 text-center text-sm p-0 m-0.5 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-gray-900/20 [&:has([aria-selected].day-outside)]:text-white [&:has([aria-selected])]:bg-gray-900/50 first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+                            day: "h-9 w-9 p-0 font-normal text-center text-sm text-gray-900 items-center justify-center",
+                            range_end: "day-range-end",
+                            selected:
+                                "rounded-md bg-gray-900 text-white hover:bg-gray-900 hover:text-white focus:bg-gray-900 focus:text-white",
+                            today: "rounded-md bg-gray-200 text-gray-900 ",
+                            outside:
+                                "day-outside text-gray-500 opacity-50 aria-selected:bg-gray-500 aria-selected:text-gray-900 aria-selected:bg-opacity-10",
+                            disabled: "text-gray-500 opacity-50",
+                            hidden: "invisible",
+                        }}
+                        components={{
+                            IconLeft: ({ ...props }) => (
+                                <FontAwesomeIcon icon={faChevronLeft} {...props} className="h-4 w-4 stroke-2" />
+                            ),
+                            IconRight: ({ ...props }) => (
+                                <FontAwesomeIcon icon={faChevronRight} {...props} className="h-4 w-4 stroke-2" />
+                            ),
+                        }}
+                    />
+                </div>
 
                 <div className="w-full mt-4 p-2">
-                    <hr className="border border-b border-b-gray-200 mb-8"/>
-                    <div
-                        >
+                    <hr className="border border-b border-b-gray-200 mb-8" />
+                    <div>
                         <Typography variant="h6" className="font-semibold text-gray-800 mb-2">
                             Available Appointment Schedules
                         </Typography>
-                        { schedules.length > 0 ? (
-                            <div>
-                                {
-                                    schedules.map((schedule, index) => (
-                                        <div key={index} className="flex items-center gap-2 mb-4">
+                        {schedules.length > 0 ? (
+                            <div className={'flex flex-row gap-2'}>
+                                {schedules.map((schedule, index) => (
+                                    <div key={index} className="flex items-center gap-2 mb-4">
+                                        <div onClick={() => setSelectedSchedule(schedule)}>
                                             <Typography className={'bg-green-500 p-2 rounded-full text-white text-xs hover:bg-green-700 hover:cursor-pointer'}>
-                                                {schedule.startTime} - {schedule.endTime}
+                                                {formatTime(schedule.startTime)} - {formatTime(schedule.endTime)}
                                             </Typography>
                                         </div>
-                                    ))
-                                }
+                                    </div>
+                                ))}
                             </div>
                         ) : (
-                            <Typography  className=" mb-4 text-xs x bg-red-500 p-2 text-white text-center">
+                            <Typography className="mb-4 text-xs bg-red-500 p-2 text-white text-center">
                                 No available schedules
                             </Typography>
                         )}
-
                     </div>
                     <div className="grid grid-cols-1 gap-2">
-                        <Input label="Appointment Time" type="time"/>
-                        <Input label="Doctor Name"/>
-                        <Button disabled={!isScheduleAvailable} style={{backgroundColor:"rgba(7,120,179,0.97)"}}>Book Appointment</Button>
+                        <Input label={selectedSchedule ? `${formatTime(selectedSchedule.startTime)} - ${formatTime(selectedSchedule.endTime)}` : 'Select An Appointment Schedule'} disabled />
+                        <Input label={selectedDoctor ? `Dr. ${selectedDoctor.firstName}` : 'Doctor Name'} disabled />
+                        <Button onClick={handleAppointmentSubmit} disabled={!isScheduleAvailable} className={'bg-green-500'}>
+                            Book Appointment
+                        </Button>
                     </div>
                 </div>
             </Card>
         </div>
-    )
-
+    );
 }
 
 function DashboardHeader() {
@@ -420,6 +460,7 @@ DoctorDetailsSection.propTypes = {
 CalendarAndAppointmentSection.propTypes = {
     selectedDoctor: PropTypes.shape({
         userId: PropTypes.number.isRequired,
+        firstName: PropTypes.string.isRequired,
     }),
 };
 

@@ -205,21 +205,28 @@ public class MasterServiceImpl implements MasterService {
     public AppointmentResponse createAppointmentWithDoctor(AppointmentRequest appointmentRequest) throws InvalidAppointmentTimeException, ParseException {
         DoctorAvailabilityRequest availabilityRequest = new DoctorAvailabilityRequest();
         availabilityRequest.setDoctorId(appointmentRequest.getDoctorId());
-        availabilityRequest.setDate(CalendarUtil.parseDate(appointmentRequest.getAppointmentStart(),
-                CalendarUtil.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS));
+
+        // Parse the date in ISO 8601 format from the request
+        Date appointmentStartDate = CalendarUtil.parseISO8601Date(appointmentRequest.getAppointmentStart());
+
+        // Set the parsed date for availability request
+        availabilityRequest.setDate(appointmentStartDate);
         DoctorAvailabilityResponse availabilityResponse = getDoctorAvailableDates(availabilityRequest);
 
-        if (availabilityResponse.getFreeSlots().containsKey(CalendarUtil.parseDate(appointmentRequest.getAppointmentStart(),
-                CalendarUtil.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS))) {
+        // Check if the parsed date is available
+        if (availabilityResponse.getFreeSlots().containsKey(appointmentStartDate)) {
             Appointment appointment = new Appointment();
             Doctor doctor = doctorService.getDoctorById(appointmentRequest.getDoctorId());
-            appointment.setAppointmentStart(CalendarUtil.parseDate(appointmentRequest.getAppointmentStart(),
-                    CalendarUtil.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS));
+
+            // Set appointment start date and other details
+            appointment.setAppointmentStart(appointmentStartDate);
             appointment.setDuration(appointmentRequest.getAppointmentLength());
             appointment.setSchedule(doctor.getSchedule());
             appointment.setPayment(null); // TODO: Implement payment
             appointment.setPatient(patientService.getPatient(appointmentRequest.getPatientId()));
             saveAppointment(appointment);
+
+            // Format the date back to your desired output format for the response
             AppointmentResponse response = new AppointmentResponse(
                     CalendarUtil.formatDate(appointment.getAppointmentStart(), CalendarUtil.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS),
                     appointment.getDuration().toString(),
@@ -234,4 +241,48 @@ public class MasterServiceImpl implements MasterService {
             throw new InvalidAppointmentTimeException();
         }
     }
+
+
+//    @Override
+//    public AppointmentResponse createAppointmentWithDoctor(AppointmentRequest appointmentRequest) throws InvalidAppointmentTimeException, ParseException {
+//        DoctorAvailabilityRequest availabilityRequest = new DoctorAvailabilityRequest();
+//        availabilityRequest.setDoctorId(appointmentRequest.getDoctorId());
+//
+//        //Parse the date in ISO 8601 format from the request
+//        Date appointmentStartDate = CalendarUtil.parseISO8601Date(appointmentRequest.getAppointmentStart());
+//
+//        //Set the date in the availability request
+//        availabilityRequest.setDate(appointmentStartDate);
+//
+////        availabilityRequest.setDate(CalendarUtil.parseDate(appointmentRequest.getAppointmentStart(),
+////                CalendarUtil.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS));
+//        DoctorAvailabilityResponse availabilityResponse = getDoctorAvailableDates(availabilityRequest);
+//
+//        // Check if the requested time is available
+//        if (availabilityResponse.getFreeSlots().containsKey(CalendarUtil.parseDate(appointmentRequest.getAppointmentStart(),
+//                CalendarUtil.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS))) {
+//            Appointment appointment = new Appointment();
+//            Doctor doctor = doctorService.getDoctorById(appointmentRequest.getDoctorId());
+//            appointment.setAppointmentStart(CalendarUtil.parseDate(appointmentRequest.getAppointmentStart(),
+//                    CalendarUtil.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS));
+//            appointment.setDuration(appointmentRequest.getAppointmentLength());
+//            appointment.setSchedule(doctor.getSchedule());
+//            appointment.setPayment(null); // TODO: Implement payment
+//            appointment.setPatient(patientService.getPatient(appointmentRequest.getPatientId()));
+//            saveAppointment(appointment);
+//            AppointmentResponse response = new AppointmentResponse(
+//                    CalendarUtil.formatDate(appointment.getAppointmentStart(), CalendarUtil.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS),
+//                    appointment.getDuration().toString(),
+//                    appointmentRequest.getPatientId(),
+//                    doctor.getUserId(),
+//                    true
+//            );
+//            log.info("Appointment created: {}", response);
+//            return response;
+//        } else {
+//            log.warn("Appointment creation attempted for unavailable time: {}", appointmentRequest.getAppointmentStart());
+//            throw new InvalidAppointmentTimeException();
+//        }
+//    }
+
 }

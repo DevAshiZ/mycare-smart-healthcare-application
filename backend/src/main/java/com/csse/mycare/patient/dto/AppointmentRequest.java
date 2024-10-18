@@ -14,14 +14,4 @@ public class AppointmentRequest {
     private Integer appointmentLength;
     private Integer patientId;
     private Integer doctorId;
-
-    @Override
-    public String toString() {
-        return "AppointmentRequest{" +
-                "appointmentStart='" + appointmentStart + '\'' +
-                ", appointmentLength='" + appointmentLength + '\'' +
-                ", patientId=" + patientId +
-                ", doctorId=" + doctorId +
-                '}';
-    }
 }

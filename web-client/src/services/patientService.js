@@ -4,10 +4,9 @@ import ERRORS from "../constants/error_messages.js";
 import MESSAGES from "../constants/messages.js";
 
 export const createAppointment = async (appointmentData) => {
+    console.log('Appointment Data Sending: ', appointmentData);
     try{
-        const response = await api.post('patient/create-appointment', {
-           appointmentData
-        })
+        const response = await api.post('patient/create-appointment', appointmentData);
         toast.success(MESSAGES.APPOINTMENT_SUCCESS , {
             style: {
                 borderRadius: '10px',

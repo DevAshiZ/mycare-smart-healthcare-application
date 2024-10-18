@@ -7,3 +7,14 @@ export const formatTime = (time) => {
     const formattedHour = hourInt % 12 || 12;
     return `${formattedHour}:${minute} ${period}`;
 };
+
+// Helper to get the next occurrence of the selected day
+export const getNextDay = (dayOfWeek) => {
+    const dayMapping = { 'MON': 1, 'TUE': 2, 'WED': 3, 'THU': 4, 'FRI': 5, 'SAT': 6, 'SUN': 0 };
+    const today = new Date();
+    const currentDay = today.getDay(); // 0-6 representing Sunday-Saturday
+    const dayDiff = (dayMapping[dayOfWeek] + 7 - currentDay) % 7; // Calculate how many days until the next `dayOfWeek`
+    const nextDate = new Date(today);
+    nextDate.setDate(today.getDate() + dayDiff);
+    return nextDate;
+};

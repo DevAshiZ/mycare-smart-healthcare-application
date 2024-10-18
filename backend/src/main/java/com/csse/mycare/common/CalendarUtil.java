@@ -32,6 +32,11 @@ public class CalendarUtil {
         return calendar.get(Calendar.DAY_OF_MONTH);
     }
 
+    public static Date parseISO8601Date(String dateString) throws ParseException {
+        SimpleDateFormat iso8601Formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+        return iso8601Formatter.parse(dateString);
+    }
+
     public static boolean isSameDay(Date date1, Date date2) {
         Calendar cal1 = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();

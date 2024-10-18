@@ -6,6 +6,7 @@ const initialState = {
     user: null,
     token: null,
     role: "",
+    userId: ""
 };
 
 const authSlice = createSlice({
@@ -19,6 +20,7 @@ const authSlice = createSlice({
             // Decode the token to extract the "sub" (user email or ID)
             const decodedToken = jwtDecode(token);
             state.user = decodedToken.sub;  // Assign "sub" value (email) to user
+            state.userId = action.payload.userId;
         },
         logout(state) {
             state.user = null;

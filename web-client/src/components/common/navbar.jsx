@@ -73,9 +73,8 @@ function NavList() {
 
 export function NavigationBar() {
   const [openNav, setOpenNav] = React.useState(false);
-  const { user, role } = useSelector((state) => state.auth);
+  const { user, role} = useSelector((state) => state.auth);
   const navigate = useNavigate();
-  console.log(user, role);
 
   const handleWindowResize = () =>
     window.innerWidth >= 960 && setOpenNav(false);
