@@ -16,8 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
-import static com.csse.mycare.common.ErrorCodes.APPOINTMENT_ADD_ERROR;
-import static com.csse.mycare.common.ErrorCodes.APPOINTMENT_ALREADY_EXISTS;
+import static com.csse.mycare.common.ErrorCodes.*;
 import static org.springframework.http.HttpStatus.OK;
 
 @Slf4j
@@ -32,20 +31,10 @@ public class PatientController extends BaseController {
             response = masterService.createAppointmentWithDoctor(appointmentRequest);
         } catch (AppointmentAlreadyExistsException e) {
             log.error("Error creating appointment for patientId: {}", appointmentRequest.getPatientId());
-            return new ResponseEntity<>(new BaseResponse<>(
-                    null,
-                    false,
-                    APPOINTMENT_ALREADY_EXISTS.getCode(),
-                    APPOINTMENT_ALREADY_EXISTS.getMessage()
-            ), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new BaseResponse<>(APPOINTMENT_ALREADY_EXISTS), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
             log.error("Error creating appointment", e);
-            return new ResponseEntity<>(new BaseResponse<>(
-                    null,
-                    false,
-                    APPOINTMENT_ADD_ERROR.getCode(),
-                    APPOINTMENT_ADD_ERROR.getMessage()
-            ), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new BaseResponse<>(APPOINTMENT_ADD_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         log.info("creating appointment for patientId: {}", appointmentRequest.getPatientId());
         return new ResponseEntity<>(
@@ -55,8 +44,19 @@ public class PatientController extends BaseController {
     }
 
     @PostMapping("/get-appointments")
-    public ResponseEntity<List<Appointment>> getPatientReservedAppointments(Integer patientId) {
+    public ResponseEntity<BaseResponse<List<Appointment>>> getPatientReservedAppointments(Integer patientId) {
         log.info("getting appointments for patientId: {}", patientId);
-        return new ResponseEntity<>(masterService.getAppointmentsByPatient(patientId), OK);
+        List<Appointment> appointments;
+        try {
+            appointments = masterService.getAppointmentsByPatient(patientId);
+            log.info("successfully retrieved appointments for patientId: {}", patientId);
+            return new ResponseEntity<>(
+                    new BaseResponse<>(appointments),
+                    OK
+            );
+        } catch (Exception e) {
+            log.error("Error fetching appointments for patientId: {}", patientId, e);
+            return new ResponseEntity<>(new BaseResponse<>(UNKNOWN_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

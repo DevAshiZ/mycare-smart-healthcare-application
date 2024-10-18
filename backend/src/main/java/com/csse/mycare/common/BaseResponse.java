@@ -29,6 +29,10 @@ public record BaseResponse<T>(
         this(data, success, errorCode, null);
     }
 
+    public BaseResponse(ErrorCodes errorCode) {
+        this(null, false, errorCode.getCode(), errorCode.getMessage());
+    }
+
     public BaseResponse(T data, Boolean success, String errorCode, String message) {
         this.data = data;
         this.success = success;
