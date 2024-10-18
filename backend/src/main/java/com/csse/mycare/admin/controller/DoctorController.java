@@ -54,14 +54,27 @@ public class DoctorController extends BaseController {
     }
 
     @PostMapping("/update-doctor")
-    public ResponseEntity<BaseResponse<Boolean>> updateDoctor(@RequestBody DoctorRegistrationRequest request) {
+    public ResponseEntity<BaseResponse<Doctor>> updateDoctor(@RequestBody DoctorRegistrationRequest request) {
         try {
             log.info("Updating doctor: {}", request.getEmail());
-            Boolean result = masterService.updateDoctor(request);
+            Doctor savedDoctor = masterService.updateDoctor(request);
             log.info("Doctor update completed for: {}", request.getEmail());
-            return new ResponseEntity<>(new BaseResponse<>(result), OK);
+            return new ResponseEntity<>(new BaseResponse<>(savedDoctor), OK);
         } catch (Exception e) {
             log.error("Error updating doctor: {}", request.getEmail(), e);
+            return new ResponseEntity<>(new BaseResponse<>(UNKNOWN_ERROR), INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/delete-doctor")
+    public ResponseEntity<BaseResponse<Boolean>> deleteDoctor(Integer doctorId) {
+        try {
+            log.info("Deleting doctor: {}", doctorId);
+            masterService.deleteDoctor(doctorId);
+            log.info("Doctor deletion completed for: {}", doctorId);
+            return new ResponseEntity<>(new BaseResponse<>(true), OK);
+        } catch (Exception e) {
+            log.error("Error deleting doctor: {}", doctorId, e);
             return new ResponseEntity<>(new BaseResponse<>(UNKNOWN_ERROR), INTERNAL_SERVER_ERROR);
         }
     }
