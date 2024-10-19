@@ -4,6 +4,7 @@ const MESSAGES = {
   DOCTOR_REGISTRATION_SUCCESS: "Doctor Added Successfully",
   SCHEDULE_ADD_SUCCESS : 'Schedule added successfully',
   APPOINTMENT_ADD_SUCCESS : 'Appointment added successfully',
+  PAYMENT_SUCCESS : 'Payment successful',
 };
 
 Object.freeze(MESSAGES);

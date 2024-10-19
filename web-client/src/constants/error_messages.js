@@ -9,6 +9,7 @@ const ERRORS = {
     'SCHEDULE_ADD_ERROR': 'Error adding schedule',
     'SCHEDULE_GET_ERROR': 'Error fetching schedules',
     'APPOINTMENT_ADD_ERROR' : 'Error adding appointment',
+    'PAYMENT_ERROR' : 'Error processing payment',
 }
 
 Object.freeze(ERRORS);
