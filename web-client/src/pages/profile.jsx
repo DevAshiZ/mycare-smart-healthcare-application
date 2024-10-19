@@ -1,10 +1,12 @@
-import {Card, Typography} from "@material-tailwind/react";
+import {Card, Chip, Typography} from "@material-tailwind/react";
 import {useEffect, useState} from "react";
 import {useSelector} from "react-redux";
 import {getAppointments} from "../services/patientService.js";
+import {formatDateWithTime} from "../utils/helper_functions.js";
 
 
 const TABLE_HEAD = ["Condition", "Date", "Doctor", "Medications"];
+const APPOINTMENT_HEAD = ["Appointment ID", "Doctor", "Appointment Date", "Duration", "Payment Status" , ""];
 
 const TABLE_ROWS = [
     {
@@ -247,25 +249,103 @@ const PaymentRecords = () => {
 }
 
 const AppointmentRecords = () => {
-
-
-
     const { userId} = useSelector((state) => state.auth);
+    const [appointments, setAppointments] = useState([]);
 
-    console.log(userId);
     useEffect(() => {
         // fetch appointment records
         const fetchAppointments = async () => {
             const appointments = await getAppointments(userId);
-            console.log(appointments);
+            setAppointments(appointments);
         }
-
         fetchAppointments();
     }, [userId]);
 
+
+
     return (
         <div>
-            appointment records
+            {appointments.length > 0 ? (
+                <table className="w-full min-w-max table-auto text-left">
+                    <thead>
+                    <tr>
+                        {APPOINTMENT_HEAD.map((head) => (
+                            <th
+                                key={head}
+                                className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                            >
+                                <Typography
+                                    variant="small"
+                                    color="blue-gray"
+                                    className="font-normal leading-none opacity-70"
+                                >
+                                    {head}
+                                </Typography>
+                            </th>
+                        ))}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {appointments.map((appointment, index) => {
+                        const isLast = index === TABLE_ROWS.length - 1;
+                        const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
+
+                        return (
+                            <tr key={name}>
+                                <td className={classes}>
+                                    <Typography
+                                        variant="small"
+                                        color="blue-gray"
+                                        className="font-normal"
+                                    >
+                                        {appointment.id}
+                                    </Typography>
+                                </td>
+                                <td className={classes}>
+                                    <Typography
+                                        variant="small"
+                                        color="blue-gray"
+                                        className="font-normal"
+                                    >
+                                        {appointment.doctor.firstName} {appointment.doctor.lastName}
+                                    </Typography>
+                                </td>
+                                <td className={classes}>
+                                    <Typography
+                                        variant="small"
+                                        color="blue-gray"
+                                        className="font-normal"
+                                    >
+                                        {formatDateWithTime(appointment.appointmentStart)}
+                                    </Typography>
+                                </td>
+                                <td className={classes}>
+                                    <Typography
+                                        variant="small"
+                                        color="blue-gray"
+                                        className="font-normal"
+                                    >
+                                        {appointment.duration} minutes
+                                    </Typography>
+                                </td>
+                                <td className={classes}>
+                                    <Typography
+                                        variant="small"
+                                        color="blue-gray"
+                                        className="font-normal"
+                                    >
+                                        {appointment.payment === null ? <Chip value={'Not Paid'} color={"red"}/> : <Chip value={'Paid'} color={"green"}/> }
+                                    </Typography>
+                                </td>
+                            </tr>
+                        );
+                    })}
+                    </tbody>
+                </table>
+            ) : (
+                <Typography className={'text-xs font-normal text-gray-800'}>No appointments found</Typography>
+            )
+            }
         </div>
     )
 }

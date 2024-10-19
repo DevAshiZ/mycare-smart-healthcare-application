@@ -33,7 +33,7 @@ export const getAppointments = async (patientId) => {
             patientId
         })
 
-        return response.data;
+        return response.data.data;
     }catch (error) {
         toast.error(ERRORS.APPOINTMENT_FETCH_ERROR , {
             style: {

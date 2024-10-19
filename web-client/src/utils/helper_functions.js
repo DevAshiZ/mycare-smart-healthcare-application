@@ -16,6 +16,23 @@ export const addMinutes = (time, minutes) => {
     return date.toTimeString().slice(0, 5);
 };
 
+
+export const formatDateWithTime = (timestamp) => {
+    const date = new Date(timestamp);
+
+    // Formatting options
+    const options = {
+        year: 'numeric',
+        month: 'long',  // Full month name (e.g., October)
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,   // 12-hour format with AM/PM
+    };
+
+    return new Intl.DateTimeFormat('en-US', options).format(date);
+};
+
 const daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
 // Function to get the next occurrence of the selected day with start time
