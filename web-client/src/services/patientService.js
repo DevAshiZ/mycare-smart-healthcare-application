@@ -27,10 +27,10 @@ export const createAppointment = async (appointmentData) => {
     }
 }
 
-export const getAppointments = async (patientID) => {
+export const getAppointments = async (patientId) => {
     try{
-        const response = await api.post('patient/get-appointments', {
-            patientID
+        const response = await api.get(`patient/get-appointments?patientId=${patientId}`, {
+            patientId
         })
 
         return response.data;

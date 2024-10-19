@@ -261,7 +261,7 @@ const AppointmentRecords = () => {
         }
 
         fetchAppointments();
-    }, []);
+    }, [userId]);
 
     return (
         <div>
