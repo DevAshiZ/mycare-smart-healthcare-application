@@ -244,6 +244,9 @@ public class MasterServiceImpl implements MasterService {
 
         try {
             cardPayment = paymentService.createCardPayment(cardPayment);
+            Appointment appointment = appointmentService.getAppointment(cardPayment.getAppointmentId());
+            appointment.setPayment(cardPayment);
+            appointmentService.saveAppointment(appointment);
         }
         catch (PaymentAlreadyMadeException e) {
             throw new PaymentAlreadyMadeException();
@@ -278,6 +281,9 @@ public class MasterServiceImpl implements MasterService {
 
         try {
             cashPayment = paymentService.createCashPayment(cashPayment);
+            Appointment appointment = appointmentService.getAppointment(cashPayment.getAppointmentId());
+            appointment.setPayment(cashPayment);
+            appointmentService.saveAppointment(appointment);
         }
         catch (PaymentAlreadyMadeException e) {
             throw new PaymentAlreadyMadeException();
