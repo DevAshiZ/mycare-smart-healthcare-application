@@ -26,7 +26,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public CardPayment createCardPayment(CardPayment cardPayment) throws PaymentAlreadyMadeException {
 
-        if(paymentRepository.findByIsPaidTrueAndAppointmentId(Long.valueOf(cardPayment.getAppointmentId())) != null){
+        if(paymentRepository.existsByIsPaidIsTrueAndAppointmentId(cardPayment.getAppointmentId())){
             throw new PaymentAlreadyMadeException();
         }
         return cardPaymentRepository.save(cardPayment);
@@ -35,7 +35,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public CashPayment createCashPayment(CashPayment cashPayment) throws PaymentAlreadyMadeException {
 
-        if(paymentRepository.findByIsPaidTrueAndAppointmentId(Long.valueOf(cashPayment.getAppointmentId())) != null){
+        if(paymentRepository.existsByIsPaidIsTrueAndAppointmentId(cashPayment.getAppointmentId())){
             throw new PaymentAlreadyMadeException();
         }
         return cashPaymentRepository.save(cashPayment);

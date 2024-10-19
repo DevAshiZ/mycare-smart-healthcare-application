@@ -17,7 +17,9 @@ public enum ErrorCodes {
     APPOINTMENT_ADD_ERROR("Error adding appointment"),
     APPOINTMENT_ALREADY_EXISTS("Appointment already exists"),
     INVALID_TIME_FORMAT("Invalid time format"),
-    PAYMENT_ERROR("Error making payment");
+    PAYMENT_ERROR("Error making payment"),
+    PAYMENT_ALREADY_MADE("Payment already made");
+
 
     private final String message;
 

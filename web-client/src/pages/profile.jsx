@@ -1,8 +1,12 @@
-import {Card, Chip, Typography} from "@material-tailwind/react";
+import {Button, Card, Chip, Typography} from "@material-tailwind/react";
 import {useEffect, useState} from "react";
 import {useSelector} from "react-redux";
 import {getAppointments} from "../services/patientService.js";
 import {formatDateWithTime} from "../utils/helper_functions.js";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faMoneyBill} from "@fortawesome/free-solid-svg-icons";
+import {useNavigate} from "react-router-dom";
+import {APPOINTMENT_FEE} from "../configs/applicationConfigs.js";
 
 
 const TABLE_HEAD = ["Condition", "Date", "Doctor", "Medications"];
@@ -133,7 +137,7 @@ const UserRecordsSection = () => {
                 <div className={'flex gap-4 pb-5 border-b border-gray-200'}>
                     <Typography
                         onClick={()=> setCurrentTab('appointment-records')}
-                        className={`text-sm font-bold text-gray-800 hover:text-green-500 hover:border-green-500 ${currentTab === 'payment-records' && 'text-green-600 border-b-2 border-green-600'}`}>
+                        className={`text-sm font-bold text-gray-800 hover:text-green-500 hover:border-green-500 ${currentTab === 'appointment-records' && 'text-green-600 border-b-2 border-green-600'}`}>
                         Appointment Records
                     </Typography>
                     <Typography
@@ -249,6 +253,8 @@ const PaymentRecords = () => {
 }
 
 const AppointmentRecords = () => {
+
+    const navigate = useNavigate();
     const { userId} = useSelector((state) => state.auth);
     const [appointments, setAppointments] = useState([]);
 
@@ -256,6 +262,7 @@ const AppointmentRecords = () => {
         // fetch appointment records
         const fetchAppointments = async () => {
             const appointments = await getAppointments(userId);
+            console.log(appointments);
             setAppointments(appointments);
         }
         fetchAppointments();
@@ -334,9 +341,27 @@ const AppointmentRecords = () => {
                                         color="blue-gray"
                                         className="font-normal"
                                     >
-                                        {appointment.payment === null ? <Chip value={'Not Paid'} color={"red"}/> : <Chip value={'Paid'} color={"green"}/> }
+                                        {appointment.payment === null ? <Chip size={"sm"} variant={"outlined"} value={'Not Paid'} color={"red"} className={'text-center'}/> :
+                                            <Chip variant={"outlined"} value={'Paid'} color={"green"}/>}
                                     </Typography>
                                 </td>
+                                {appointment.payment === null && (
+                                    <td className={classes}>
+                                    <Button  onClick={() => navigate('/payment', {
+                                        state:
+                                            {
+                                                appointmentId: appointment.id ,
+                                                amount: APPOINTMENT_FEE,
+                                                patientId: userId,
+                                                doctorName: `${appointment.doctor.firstName} ${appointment.doctor.lastName}`,
+                                                doctorId: appointment.doctor.userId
+                                            }
+                                    })} size={"sm"} className={'items-center gap-2 flex bg-green-500'}>
+                                        <FontAwesomeIcon icon={faMoneyBill}/>
+                                        <Typography className={'text-xs '}>Pay</Typography>
+                                    </Button>
+                                </td>)
+                                }
                             </tr>
                         );
                     })}

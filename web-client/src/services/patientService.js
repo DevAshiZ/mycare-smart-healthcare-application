@@ -1,10 +1,8 @@
 import api from "./api.js";
 import toast from "react-hot-toast";
-import ERRORS from "../constants/error_messages.js";
 import MESSAGES from "../constants/messages.js";
 
 export const createAppointment = async (appointmentData) => {
-    console.log('Appointment Data Sending: ', appointmentData);
     try{
         const response = await api.post('patient/create-appointment', appointmentData);
         toast.success(MESSAGES.APPOINTMENT_SUCCESS , {
@@ -16,14 +14,13 @@ export const createAppointment = async (appointmentData) => {
         });
         return response.data;
     }catch (error) {
-        toast.error(ERRORS.APPOINTMENT_ERROR , {
+        toast.error(error.response?.data.message , {
             style: {
                 borderRadius: '10px',
                 background: '#333',
                 color: '#fff',
             }
         });
-        console.log(error);
     }
 }
 
@@ -35,13 +32,12 @@ export const getAppointments = async (patientId) => {
 
         return response.data.data;
     }catch (error) {
-        toast.error(ERRORS.APPOINTMENT_FETCH_ERROR , {
+        toast.error(error.response?.data.message , {
             style: {
                 borderRadius: '10px',
                 background: '#333',
                 color: '#fff',
             }
         });
-        console.log(error);
     }
 }

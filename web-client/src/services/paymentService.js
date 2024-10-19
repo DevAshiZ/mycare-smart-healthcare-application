@@ -1,7 +1,6 @@
 import api from "./api.js";
 import toast from "react-hot-toast";
 import MESSAGES from "../constants/messages.js";
-import ERRORS from "../constants/error_messages.js";
 
 export const makeCashPayment = async (cashPaymentData) => {
     try {
@@ -15,14 +14,13 @@ export const makeCashPayment = async (cashPaymentData) => {
         });
         return response.data;
     }catch (error) {
-        toast.error(ERRORS.PAYMENT_ERROR , {
+        toast.error(error.response?.data.message , {
             style: {
                 borderRadius: '10px',
                 background: '#333',
                 color: '#fff',
             }
         });
-        console.log(ERRORS.PAYMENT_ERROR + error);
     }
 }
 
@@ -38,13 +36,12 @@ export const makeCardPayment = async (cardPayment) => {
         });
         return response.data;
     }catch (error) {
-        toast.error(ERRORS.PAYMENT_ERROR , {
+        toast.error(error.response?.data.message , {
             style: {
                 borderRadius: '10px',
                 background: '#333',
                 color: '#fff',
             }
         });
-        console.log(ERRORS.PAYMENT_ERROR + error);
     }
 }

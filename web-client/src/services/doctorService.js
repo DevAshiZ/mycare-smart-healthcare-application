@@ -1,6 +1,5 @@
 import toast from "react-hot-toast";
 import api from "./api.js";
-import ERRORS from "../constants/error_messages.js";
 import MESSAGES from "../constants/messages.js";
 
 export const getDoctorAvailability = async (doctorId, date) => {
@@ -11,14 +10,13 @@ export const getDoctorAvailability = async (doctorId, date) => {
         })
         return response.data;
     }catch (error) {
-        toast.error(ERRORS.DOCTOR_AVAILABILITY_ERROR , {
+        toast.error(error.response?.data.message , {
             style: {
                 borderRadius: '10px',
                 background: '#333',
                 color: '#fff',
             }
         });
-        console.log(error);
     }
 }
 
@@ -35,14 +33,13 @@ export const addNewDoctor = async (doctorData) => {
 
         return response.data;
     }catch (error) {
-        toast.error(ERRORS.ADD_DOCTOR_ERROR , {
+        toast.error(error.response?.data.message , {
             style: {
                 borderRadius: '10px',
                 background: '#333',
                 color: '#fff',
             }
         });
-        console.log(error);
     }
 }
 
@@ -51,13 +48,12 @@ export const getAllDoctors = async () => {
         const response = await api.get('/admin/doctor/get-all-doctors');
         return response.data.data;
     }catch (error) {
-        toast.error(ERRORS.GET_DOCTORS_ERROR , {
+        toast.error(error.response?.data.message , {
             style: {
                 borderRadius: '10px',
                 background: '#333',
                 color: '#fff',
             }
         });
-        console.log(error);
     }
 }

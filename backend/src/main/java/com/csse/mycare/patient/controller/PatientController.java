@@ -3,6 +3,7 @@ package com.csse.mycare.patient.controller;
 import com.csse.mycare.common.BaseController;
 import com.csse.mycare.common.BaseResponse;
 import com.csse.mycare.common.exceptions.AppointmentAlreadyExistsException;
+import com.csse.mycare.common.exceptions.PaymentAlreadyMadeException;
 import com.csse.mycare.masterservice.dao.Appointment;
 import com.csse.mycare.patient.dto.*;
 import lombok.extern.slf4j.Slf4j;
@@ -64,7 +65,10 @@ public class PatientController extends BaseController {
 
         try{
             response = masterService.makeCardPayment(cardPaymentRequest);
-        }catch (Exception e){
+        }catch (PaymentAlreadyMadeException e){
+            log.error("Error making card payment for userId: {}", cardPaymentRequest.getUserId(), e);
+            return new ResponseEntity<>(new BaseResponse<>(PAYMENT_ALREADY_MADE), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e){
             log.error("Error making card payment for userId: {}", cardPaymentRequest.getUserId(), e);
             return new ResponseEntity<>(new BaseResponse<>(PAYMENT_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -82,6 +86,9 @@ public class PatientController extends BaseController {
 
         try{
             response = masterService.makeCashPayment(cashPaymentRequest);
+        }catch (PaymentAlreadyMadeException e){
+            log.error("Error making cash payment for userId: {}", cashPaymentRequest.getUserId(), e);
+            return new ResponseEntity<>(new BaseResponse<>(PAYMENT_ALREADY_MADE), HttpStatus.INTERNAL_SERVER_ERROR);
         }catch (Exception e){
             log.error("Error making cash payment for userId: {}", cashPaymentRequest.getUserId(), e);
             return new ResponseEntity<>(new BaseResponse<>(PAYMENT_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);

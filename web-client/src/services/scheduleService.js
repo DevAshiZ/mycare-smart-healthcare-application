@@ -1,7 +1,6 @@
 import api from "./api.js";
 import toast from "react-hot-toast";
 import MESSAGES from "../constants/messages.js";
-import ERRORS from "../constants/error_messages.js";
 
 export const createSchedule = async (schedule) => {
     try{
@@ -16,14 +15,13 @@ export const createSchedule = async (schedule) => {
 
         return response.data;
     }catch (error) {
-        toast.error(ERRORS.SCHEDULE_ADD_ERROR , {
+        toast.error(error.response?.data.message , {
             style: {
                 borderRadius: '10px',
                 background: '#333',
                 color: '#fff',
             }
         });
-        console.log(error);
     }
 }
 
@@ -32,14 +30,13 @@ export const getSchedulesByDate = async (day) => {
         const response = await api.get(`/admin/schedule/get-schedules-by-day?day=${day}`);
         return response.data;
     }catch (error) {
-        toast.error(ERRORS.SCHEDULE_GET_ERROR , {
+        toast.error(error.response?.data.message , {
             style: {
                 borderRadius: '10px',
                 background: '#333',
                 color: '#fff',
             }
-        })
-        console.log(error);
+        });
     }
 }
 
@@ -48,13 +45,12 @@ export const getSchedulesByDoctor = async (doctorId) => {
         const response = await api.get(`/admin/schedule/get-schedules-by-doctor?doctorId=${doctorId}`);
         return response.data;
     }catch (error) {
-        toast.error(ERRORS.SCHEDULE_GET_ERROR , {
+        toast.error(error.response?.data.message , {
             style: {
                 borderRadius: '10px',
                 background: '#333',
                 color: '#fff',
             }
-        })
-        console.log(error);
+        });
     }
 }

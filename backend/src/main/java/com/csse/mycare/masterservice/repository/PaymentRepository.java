@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
-    Boolean findByIsPaidTrueAndAppointmentId(Long appointmentId);
+    boolean existsByIsPaidIsTrueAndAppointmentId(Integer appointmentId);
 }
 
 

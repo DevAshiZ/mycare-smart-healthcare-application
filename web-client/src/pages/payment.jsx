@@ -3,6 +3,10 @@ import {paymentScreenStyles} from "../assets/styles/payment.styles.js";
 import {useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCreditCard} from "@fortawesome/free-solid-svg-icons";
+import {useLocation} from "react-router-dom";
+import toast from "react-hot-toast";
+import {makeCardPayment, makeCashPayment} from "../services/paymentService.js";
+import PropTypes from "prop-types";
 
 
 function formatCardNumber(value) {
@@ -33,6 +37,9 @@ function formatExpires(value) {
 
 export const PaymentPage = () => {
 
+    const location = useLocation();
+    const { appointmentId, amount, patientId, doctorId, doctorName } = location.state || {};
+
     const [paymentMethod, setPaymentMethod] = useState('card');
 
 
@@ -57,7 +64,9 @@ export const PaymentPage = () => {
                 </div>
                 {/* Payment Form Container*/}
                 <div>
-                    {paymentMethod === 'card' ? <CardPaymentForm/> : <CashPaymentForm/>}
+                    {paymentMethod === 'card' ?
+                        <CardPaymentForm doctorId={ doctorId} patientId={patientId} appointmentId={appointmentId} amount={amount}/> :
+                        <CashPaymentForm doctorId={ doctorId} patientId={patientId} appointmentId={appointmentId} amount={amount}/>}
                 </div>
             </Card>
             <Card className={paymentScreenStyles.billInfoSection.container}>
@@ -69,24 +78,54 @@ export const PaymentPage = () => {
                     <Typography className={'text-sm text-gray-800'}>Payment Status</Typography>
                     <Chip value={'Pending'} color={'orange'}/>
                 </div>
-                <div className={'border-b border-gray-200 px-8 mt-4 mb-2'}>
+                <div className={'px-4 pt-4 border-t  mt-4'}>
+                    <div className={'flex justify-between '}>
 
+                        <div>
+                            <Typography className={'text-sm text-gray-800'}>Appointment </Typography>
+                            <Typography className={'text-xs text-gray-800 mt-2'}> <strong className={'font-semibold'}>Doctor:</strong> Dr. {doctorName} </Typography>
+                            <Typography className={'text-xs text-gray-800'}> <strong className={'font-semibold'}>Appointment ID:</strong> {appointmentId} </Typography>
+                        </div>
+
+                        <Typography className={'text-sm text-gray-800'}> Rs. {amount.toFixed(2)}</Typography>
+                    </div>
+                </div>
+                <div className={'border-b border-gray-200 px-8 mt-4 mb-2'}>
                 </div>
                 <div className={'flex justify-between  px-4'}>
                     <Typography className={'text-sm text-gray-800'}>Total Amount</Typography>
-                    <Typography className={'text-sm text-gray-800'}>Rs. 1900.00</Typography>
+                    <Typography className={'text-sm text-gray-800'}> Rs. {amount.toFixed(2)}</Typography>
                 </div>
             </Card>
         </div>
     )
 }
 
-const CardPaymentForm = () => {
+const CardPaymentForm = ({  patientId , appointmentId, amount}) => {
 
-    const [cardNumber, setCardNumber] = useState('');
-    const [cardExpires, setCardExpires] = useState('');
+    const [cardPaymentData, setCardPaymentData] = useState({
+        userId: patientId,
+        appointmentId: appointmentId,
+        amount: amount,
+        cardNumber: '',
+        cardHolderName: '',
+        expiryDate: '',
+        cvv: '',
+    });
 
+    const handleSubmit = async ()=> {
+        if(cardPaymentData.cardNumber.length < 19 || cardPaymentData.expiryDate.length < 5 || cardPaymentData.cvv.length < 3){
+            toast.error('Please fill all fields correctly');
+            return;
+        }
 
+        const response = await makeCardPayment(cardPaymentData);
+        console.log(response);
+    }
+    const handleOnChange = (e) => {
+        const { name, value } = e.target;
+        setCardPaymentData({ ...cardPaymentData, [name]: value });
+    };
 
     return (
         <div className={'flex items-center justify-between p-4'}>
@@ -96,9 +135,10 @@ const CardPaymentForm = () => {
 
                 <Typography className={'text-sm font-bold text-gray-800 mb-2'}>Card Number</Typography>
                 <Input
+                    name="cardNumber"
                     maxLength={19}
-                    onChange={(event) => setCardNumber(event.target.value)}
-                    value={formatCardNumber(cardNumber)}
+                    onChange={handleOnChange}
+                    value={formatCardNumber(cardPaymentData.cardNumber)}
                     icon={
                         <FontAwesomeIcon icon={faCreditCard} className="absolute left-0 h-4 w-4 text-blue-gray-300"/>
                     }
@@ -113,9 +153,10 @@ const CardPaymentForm = () => {
                     <div>
                         <Typography className={'text-sm font-bold text-gray-800 mb-2'}>Card Expires</Typography>
                         <Input
+                            name="expiryDate"
                             maxLength={5}
-                            value={formatExpires(cardExpires)}
-                            onChange={(event) => setCardExpires(event.target.value)}
+                            value={formatExpires(cardPaymentData.expiryDate)}
+                            onChange={handleOnChange}
                             containerProps={{className: "min-w-[72px]"}}
                             placeholder="00/00"
                             className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
@@ -127,6 +168,8 @@ const CardPaymentForm = () => {
                     <div>
                         <Typography className={'text-sm font-bold text-gray-800 mb-2'}>CVV</Typography>
                         <Input
+                            name="cvv"
+                            onChange={handleOnChange}
                             maxLength={3}
                             containerProps={{className: "min-w-[72px]"}}
                             placeholder="000"
@@ -141,6 +184,8 @@ const CardPaymentForm = () => {
                 <div>
                     <Typography className={'text-sm font-bold text-gray-800 mb-2 mt-2'}>Card Holder</Typography>
                     <Input
+                        name="cardHolderName"
+                        onChange={handleOnChange}
                         labelProps={{
                             className: "before:content-none after:content-none",
                         }}
@@ -148,13 +193,34 @@ const CardPaymentForm = () => {
                     />
                 </div>
 
-                <Button fullWidth className={'mt-5'}>Make Payment</Button>
+                <Button onClick={handleSubmit} fullWidth className={'mt-5'}>Make Payment</Button>
             </div>
         </div>
     )
 }
 
-const CashPaymentForm = () => {
+const CashPaymentForm = ({ patientId , appointmentId, amount}) => {
+
+    const [cashPaymentData, setCashPaymentData] = useState({
+        userId: patientId,
+        appointmentId: appointmentId,
+        amount: amount,
+        userEmail: '',
+    });
+
+    const handleOnChange = (e) => {
+        const { name, value } = e.target;
+        setCashPaymentData({ ...cashPaymentData, [name]: value });
+    }
+
+    const handleSubmit = async ()=> {
+        if(!cashPaymentData.userEmail){
+            toast.error('Please fill all fields correctly');
+            return;
+        }
+        await makeCashPayment(cashPaymentData);
+    }
+
     return (
         <div className={'flex items-center justify-between p-4'}>
             <img alt={'cash payment image'} className='w-96'
@@ -162,21 +228,28 @@ const CashPaymentForm = () => {
             <div className='w-96'>
                 <Typography className={'text-sm font-bold text-gray-800 mb-2'}>Email</Typography>
                 <Input
+                    name={ 'userEmail'}
+                    onChange={handleOnChange}
                     className=" !border-t-blue-gray-200 focus:!border-t-gray-900 "
                     labelProps={{
                         className: "before:content-none after:content-none",
                     }}
                 />
-                <Typography className={'text-sm font-bold text-gray-800 mb-2 mt-2'}>Phone Number</Typography>
-                <Input
-                    className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                    labelProps={{
-                        className: "before:content-none after:content-none",
-                    }}
-                />
-                <Button fullWidth className={'mt-5'}>Proceed Payment</Button>
+
+                <Button onClick={handleSubmit} fullWidth className={'mt-5'}>Proceed Payment</Button>
             </div>
         </div>
     )
 }
 
+CashPaymentForm.propTypes = {
+    patientId: PropTypes.string,
+    appointmentId: PropTypes.string,
+    amount: PropTypes.number,
+};
+
+CardPaymentForm.propTypes = {
+    patientId: PropTypes.string,
+    appointmentId: PropTypes.string,
+    amount: PropTypes.number,
+};
