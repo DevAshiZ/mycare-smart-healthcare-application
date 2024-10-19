@@ -4,14 +4,12 @@ import com.csse.mycare.admin.dto.DoctorRegistrationRequest;
 import com.csse.mycare.admin.dto.PharmacyRegistrationRequest;
 import com.csse.mycare.admin.dto.ScheduleRequest;
 import com.csse.mycare.common.exceptions.*;
+import com.csse.mycare.doctor.dto.PrescriptionDTO;
 import com.csse.mycare.masterservice.dao.*;
 import com.csse.mycare.patient.dto.AppointmentRequest;
 import com.csse.mycare.patient.dto.AppointmentResponse;
-import com.csse.mycare.patient.dto.DoctorAvailabilityRequest;
-import com.csse.mycare.patient.dto.DoctorAvailabilityResponse;
 
 import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 
 public interface MasterService {
@@ -42,23 +40,42 @@ public interface MasterService {
 
     // Pharmacy
     public Boolean savePharmacy(PharmacyRegistrationRequest pharmacy) throws UserRegistrationException, UserAlreadyExistsException;
+
     public Pharmacy updatePharmacy(PharmacyRegistrationRequest pharmacy) throws ReferedPharmacyNotFoundException;
+
     public void deletePharmacy(Integer pharmacyId);
+
     public List<Pharmacy> getAllPharmacies();
 
 
     // Schedule
     public List<Schedule> getAllSchedules();
+
     public Schedule saveSchedule(ScheduleRequest schedule);
+
     public List<Schedule> getSchedulesByDay(String day);
+
     public List<Schedule> getSchedulesByDoctorId(Integer doctorId);
 
     // Medicine
     public List<Medicine> getAllMedicines();
+
     public Medicine saveMedicine(Medicine medicine);
+
     public Medicine getMedicineById(Integer id);
+
     public Medicine updateMedicine(Medicine medicine);
+
     public void deleteMedicine(Integer id);
+
+    // Prescription
+    Prescription findPrescriptionById(Long id);
+
+    List<Prescription> findAllPrescriptions();
+
+    Prescription savePrescription(PrescriptionDTO prescription) throws ParseException;
+
+    void deletePrescription(Integer id);
 
     // Standalone Methods
     //public DoctorAvailabilityResponse getDoctorAvailableDates(DoctorAvailabilityRequest request);

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -28,5 +29,5 @@ public class Prescription {
     private Date issueDate;
 
     @OneToMany
-    List<Medicine> medicines;
+    List<Medicine> medicines = new ArrayList<>();
 }

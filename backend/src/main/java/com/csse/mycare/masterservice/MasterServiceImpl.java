@@ -9,16 +9,19 @@ import com.csse.mycare.common.exceptions.AppointmentAlreadyExistsException;
 import com.csse.mycare.common.exceptions.ReferedDoctorNotFoundException;
 import com.csse.mycare.common.exceptions.ReferedPharmacyNotFoundException;
 import com.csse.mycare.common.exceptions.UserAlreadyExistsException;
+import com.csse.mycare.doctor.dto.PrescriptionDTO;
 import com.csse.mycare.masterservice.dao.*;
 import com.csse.mycare.masterservice.service.*;
 import com.csse.mycare.patient.dto.AppointmentRequest;
 import com.csse.mycare.patient.dto.AppointmentResponse;
 import com.csse.mycare.security.service.AuthenticationService;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -31,6 +34,7 @@ public class MasterServiceImpl implements MasterService {
     AuthenticationService authenticationService;
     ScheduleService scheduleService;
     MedicineService medicineService;
+    PrescriptionService prescriptionService;
 
     @Autowired
     public MasterServiceImpl(
@@ -40,7 +44,8 @@ public class MasterServiceImpl implements MasterService {
             PharmacyService pharmacyService,
             AuthenticationService authenticationService,
             ScheduleService scheduleService,
-            MedicineService medicineService
+            MedicineService medicineService,
+            PrescriptionService prescriptionService
     ) {
         this.appointmentService = appointmentService;
         this.doctorService = doctorService;
@@ -49,6 +54,7 @@ public class MasterServiceImpl implements MasterService {
         this.authenticationService = authenticationService;
         this.scheduleService = scheduleService;
         this.medicineService = medicineService;
+        this.prescriptionService = prescriptionService;
     }
 
     @Override
@@ -180,6 +186,38 @@ public class MasterServiceImpl implements MasterService {
     @Override
     public void deleteMedicine(Integer id) {
         medicineService.deleteMedicine(id);
+    }
+
+    @Override
+    public Prescription findPrescriptionById(Long id) {
+        return prescriptionService.findPrescriptionById(id);
+    }
+
+    @Override
+    public List<Prescription> findAllPrescriptions() {
+        return prescriptionService.findAllPrescriptions();
+    }
+
+    @Override
+    @Transactional
+    public Prescription savePrescription(PrescriptionDTO prescription) throws ParseException {
+        Prescription newPrescription = new Prescription();
+        List<Medicine> savedMedicines = new ArrayList<>();
+        for (Medicine medicine : prescription.getMedicines()){
+            medicine = medicineService.saveMedicine(medicine);
+            savedMedicines.add(medicine);
+        }
+        newPrescription.setMedicines(savedMedicines);
+        newPrescription.setDoctor(doctorService.getDoctorById(prescription.getDoctorId()));
+        newPrescription.setPatient(patientService.getPatient(prescription.getPatientId()));
+        newPrescription.setIssueDate(CalendarUtil.parseISO8601Date(prescription.getIssueDate()));
+
+        return prescriptionService.savePrescription(newPrescription);
+    }
+
+    @Override
+    public void deletePrescription(Integer id) {
+        prescriptionService.deletePrescription(id);
     }
 
     /**

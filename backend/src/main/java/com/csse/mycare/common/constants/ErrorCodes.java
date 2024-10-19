@@ -15,7 +15,8 @@ public enum ErrorCodes {
     SCHEDULE_ADD_ERROR("Error adding schedule"),
     SCHEDULE_GET_ERROR("Error fetching schedules"),
     APPOINTMENT_ADD_ERROR("Error adding appointment"),
-    APPOINTMENT_ALREADY_EXISTS("Appointment already exists");
+    APPOINTMENT_ALREADY_EXISTS("Appointment already exists"),
+    INVALID_TIME_FORMAT("Invalid time format");
 
     private final String message;
 
