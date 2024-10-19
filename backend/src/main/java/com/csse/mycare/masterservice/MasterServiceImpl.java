@@ -4,21 +4,21 @@ import com.csse.mycare.admin.dto.DoctorRegistrationRequest;
 import com.csse.mycare.admin.dto.PharmacyRegistrationRequest;
 import com.csse.mycare.admin.dto.ScheduleRequest;
 import com.csse.mycare.common.CalendarUtil;
+import com.csse.mycare.common.constants.PaymentMethod;
 import com.csse.mycare.common.constants.Role;
-import com.csse.mycare.common.exceptions.AppointmentAlreadyExistsException;
-import com.csse.mycare.common.exceptions.ReferedDoctorNotFoundException;
-import com.csse.mycare.common.exceptions.ReferedPharmacyNotFoundException;
-import com.csse.mycare.common.exceptions.UserAlreadyExistsException;
+import com.csse.mycare.common.exceptions.*;
 import com.csse.mycare.masterservice.dao.*;
 import com.csse.mycare.masterservice.service.*;
-import com.csse.mycare.patient.dto.AppointmentRequest;
-import com.csse.mycare.patient.dto.AppointmentResponse;
+import com.csse.mycare.patient.dto.*;
 import com.csse.mycare.security.service.AuthenticationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -31,6 +31,7 @@ public class MasterServiceImpl implements MasterService {
     AuthenticationService authenticationService;
     ScheduleService scheduleService;
     MedicineService medicineService;
+    PaymentService paymentService;
 
     @Autowired
     public MasterServiceImpl(
@@ -40,7 +41,8 @@ public class MasterServiceImpl implements MasterService {
             PharmacyService pharmacyService,
             AuthenticationService authenticationService,
             ScheduleService scheduleService,
-            MedicineService medicineService
+            MedicineService medicineService,
+            PaymentService paymentService
     ) {
         this.appointmentService = appointmentService;
         this.doctorService = doctorService;
@@ -49,6 +51,7 @@ public class MasterServiceImpl implements MasterService {
         this.authenticationService = authenticationService;
         this.scheduleService = scheduleService;
         this.medicineService = medicineService;
+        this.paymentService = paymentService;
     }
 
     @Override
@@ -180,6 +183,75 @@ public class MasterServiceImpl implements MasterService {
     @Override
     public void deleteMedicine(Integer id) {
         medicineService.deleteMedicine(id);
+    }
+
+    @Override
+    public PaymentResponse makeCardPayment(CardPaymentRequest cardPaymentRequest) throws PaymentAlreadyMadeException, PaymentFailedException {
+        CardPayment cardPayment = new CardPayment();
+
+        cardPayment.setUserId(cardPaymentRequest.getUserId());
+        cardPayment.setAppointmentId(cardPaymentRequest.getAppointmentId());
+        cardPayment.setAmount(cardPaymentRequest.getAmount());
+        cardPayment.setPaymentMethod(PaymentMethod.CARD);
+        cardPayment.setPaymentDateTime(LocalDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault()));
+        cardPayment.setIsPaid(true);
+        cardPayment.setCardNumber(cardPaymentRequest.getCardNumber());
+        cardPayment.setCardHolderName(cardPaymentRequest.getCardHolderName());
+        cardPayment.setExpiryDate(cardPaymentRequest.getExpiryDate());
+        cardPayment.setCvv(cardPaymentRequest.getCvv());
+
+        try {
+            cardPayment = paymentService.createCardPayment(cardPayment);
+        }
+        catch (PaymentAlreadyMadeException e) {
+            throw new PaymentAlreadyMadeException();
+        }
+        catch (Exception e) {
+            throw new PaymentFailedException();
+        }
+
+        return PaymentResponse.builder()
+                .transactionId(cardPayment.getId().toString())
+                .appointmentID(cardPayment.getAppointmentId().toString())
+                .paymentAmount(cardPayment.getAmount())
+                .paymentMethod(cardPayment.getPaymentMethod().toString())
+                .paymentDateTime(cardPayment.getPaymentDateTime())
+                .isPaid(cardPayment.getIsPaid())
+                .build();
+
+    }
+
+    @Override
+    public PaymentResponse makeCashPayment(CashPaymentRequest cashPaymentRequest) throws PaymentAlreadyMadeException, PaymentFailedException {
+
+        CashPayment cashPayment = new CashPayment();
+
+        cashPayment.setUserId(cashPaymentRequest.getUserId());
+        cashPayment.setAppointmentId(cashPaymentRequest.getAppointmentId());
+        cashPayment.setAmount(cashPaymentRequest.getAmount());
+        cashPayment.setPaymentMethod(PaymentMethod.CARD);
+        cashPayment.setPaymentDateTime(LocalDateTime.ofInstant(new Date().toInstant(), ZoneId.systemDefault()));
+        cashPayment.setIsPaid(true);
+        cashPayment.setUserEmail(cashPaymentRequest.getUserEmail());
+
+        try {
+            cashPayment = paymentService.createCashPayment(cashPayment);
+        }
+        catch (PaymentAlreadyMadeException e) {
+            throw new PaymentAlreadyMadeException();
+        }
+        catch (Exception e) {
+            throw new PaymentFailedException();
+        }
+
+        return PaymentResponse.builder()
+                .transactionId(cashPayment.getId().toString())
+                .appointmentID(cashPayment.getAppointmentId().toString())
+                .paymentAmount(cashPayment.getAmount())
+                .paymentMethod(cashPayment.getPaymentMethod().toString())
+                .paymentDateTime(cashPayment.getPaymentDateTime())
+                .isPaid(cashPayment.getIsPaid())
+                .build();
     }
 
     /**

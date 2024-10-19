@@ -5,10 +5,7 @@ import com.csse.mycare.admin.dto.PharmacyRegistrationRequest;
 import com.csse.mycare.admin.dto.ScheduleRequest;
 import com.csse.mycare.common.exceptions.*;
 import com.csse.mycare.masterservice.dao.*;
-import com.csse.mycare.patient.dto.AppointmentRequest;
-import com.csse.mycare.patient.dto.AppointmentResponse;
-import com.csse.mycare.patient.dto.DoctorAvailabilityRequest;
-import com.csse.mycare.patient.dto.DoctorAvailabilityResponse;
+import com.csse.mycare.patient.dto.*;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -59,6 +56,10 @@ public interface MasterService {
     public Medicine getMedicineById(Integer id);
     public Medicine updateMedicine(Medicine medicine);
     public void deleteMedicine(Integer id);
+
+    //Payment
+    public PaymentResponse makeCardPayment(CardPaymentRequest cardPaymentRequest) throws PaymentAlreadyMadeException ,PaymentFailedException;
+    public PaymentResponse makeCashPayment(CashPaymentRequest cashPaymentRequest) throws PaymentAlreadyMadeException ,PaymentFailedException;
 
     // Standalone Methods
     //public DoctorAvailabilityResponse getDoctorAvailableDates(DoctorAvailabilityRequest request);

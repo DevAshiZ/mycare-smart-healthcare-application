@@ -87,6 +87,7 @@ const CardPaymentForm = () => {
     const [cardExpires, setCardExpires] = useState('');
 
 
+
     return (
         <div className={'flex items-center justify-between p-4'}>
         <img alt={'card payment image'} className='w-96' src={'https://img.freepik.com/free-vector/concept-credit-card-payment-landing-page_23-2148298985.jpg?t=st=1728837495~exp=1728841095~hmac=d4d7c8eb33104f03a9aca5e1b5c6ce0a28f72be2c5a6689d45d6dafba225b555&w=740'}/>

@@ -78,4 +78,5 @@ public class CalendarUtil {
         long diff = date2.getTime() - date1.getTime();
         return (int) (diff / (60 * 1000));
     }
+
 }
