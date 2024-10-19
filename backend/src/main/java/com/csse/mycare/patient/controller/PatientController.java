@@ -4,8 +4,7 @@ import com.csse.mycare.common.BaseController;
 import com.csse.mycare.common.BaseResponse;
 import com.csse.mycare.common.exceptions.AppointmentAlreadyExistsException;
 import com.csse.mycare.masterservice.dao.Appointment;
-import com.csse.mycare.patient.dto.AppointmentRequest;
-import com.csse.mycare.patient.dto.AppointmentResponse;
+import com.csse.mycare.patient.dto.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,4 +58,42 @@ public class PatientController extends BaseController {
             return new ResponseEntity<>(new BaseResponse<>(UNKNOWN_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("payment/pay-card")
+    public ResponseEntity<BaseResponse<PaymentResponse>> makeCardPayment(@RequestBody CardPaymentRequest cardPaymentRequest) {
+        PaymentResponse response;
+        log.info("making card payment for userId: {}", cardPaymentRequest.getUserId());
+
+        try{
+            response = masterService.makeCardPayment(cardPaymentRequest);
+        }catch (Exception e){
+            log.error("Error making card payment for userId: {}", cardPaymentRequest.getUserId(), e);
+            return new ResponseEntity<>(new BaseResponse<>(PAYMENT_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(
+                new BaseResponse<>(response),
+                HttpStatus.CREATED
+        );
+    }
+
+    @PostMapping("/payment/pay-cash")
+    public ResponseEntity<BaseResponse<PaymentResponse>> makeCashPayment(@RequestBody CashPaymentRequest cashPaymentRequest) {
+        PaymentResponse response;
+        log.info("making cash payment for userId: {}", cashPaymentRequest.getUserId());
+
+        try{
+            response = masterService.makeCashPayment(cashPaymentRequest);
+        }catch (Exception e){
+            log.error("Error making cash payment for userId: {}", cashPaymentRequest.getUserId(), e);
+            return new ResponseEntity<>(new BaseResponse<>(PAYMENT_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(
+                new BaseResponse<>(response),
+                HttpStatus.CREATED
+        );
+    }
+
+
 }
