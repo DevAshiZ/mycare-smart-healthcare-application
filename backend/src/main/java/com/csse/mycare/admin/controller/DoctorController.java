@@ -4,14 +4,13 @@ import com.csse.mycare.admin.dto.DoctorRegistrationRequest;
 import com.csse.mycare.common.BaseController;
 import com.csse.mycare.common.BaseResponse;
 import com.csse.mycare.common.exceptions.UserAlreadyExistsException;
+import com.csse.mycare.masterservice.dao.Appointment;
 import com.csse.mycare.masterservice.dao.Doctor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -75,6 +74,23 @@ public class DoctorController extends BaseController {
         } catch (Exception e) {
             log.error("Error deleting doctor: {}", doctorId, e);
             return new ResponseEntity<>(new BaseResponse<>(UNKNOWN_ERROR), INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/get-appointments")
+    public ResponseEntity<BaseResponse<List<Appointment>>> getDoctorAppointments(@RequestParam Integer doctorId) {
+        log.info("getting appointments for doctorId: {}", doctorId);
+        List<Appointment> appointments;
+        try {
+            appointments = masterService.getAppointmentsByDoctor(doctorId);
+            log.info("successfully retrieved appointments for doctorId: {}", doctorId);
+            return new ResponseEntity<>(
+                    new BaseResponse<>(appointments),
+                    OK
+            );
+        } catch (Exception e) {
+            log.error("Error fetching appointments for doctorId: {}", doctorId, e);
+            return new ResponseEntity<>(new BaseResponse<>(UNKNOWN_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

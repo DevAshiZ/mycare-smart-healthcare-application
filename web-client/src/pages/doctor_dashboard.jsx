@@ -1,42 +1,13 @@
-import {Avatar, Button, Card, IconButton, Input, Option, Select, Textarea, Typography} from "@material-tailwind/react";
-import {useState} from "react";
+import {Button, Card,  Input, Option, Select, Textarea, Typography} from "@material-tailwind/react";
+import {useEffect, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPlusCircle,  faTrash,  faX} from "@fortawesome/free-solid-svg-icons";
+import {faPlusCircle,  faX} from "@fortawesome/free-solid-svg-icons";
 import PropTypes from "prop-types";
+import {createPrescription, getDoctorAppointments} from "../services/doctorService.js";
+import {useSelector} from "react-redux";
+import {formatDateWithTime} from "../utils/helper_functions.js";
 
 
-const PATIENTS = [
-    {
-        id: 1,
-        name: 'Patient 1',
-        age: 23,
-    },
-    {
-        id: 2,
-        name: 'Patient 2',
-        age: 25,
-    },
-    {
-        id: 3,
-        name: 'Patient 3',
-        age: 27,
-    },
-    {
-        id: 4,
-        name: 'Patient 4',
-        age: 29,
-    },
-    {
-        id: 5,
-        name: 'Patient 5',
-        age: 31,
-    },
-    {
-        id: 6,
-        name: 'Patient 6',
-        age: 33,
-    },
-]
 const TABLE_HEADERS = [
     'Medication Name',
     'Dosage',
@@ -47,7 +18,8 @@ const TABLE_HEADERS = [
 
 export const DoctorDashboard = () => {
     const [medicines, setMedicines] = useState([]);
-    const [selectedPatient, setSelectedPatient] = useState(null);
+
+    const [selectedAppointment, setSelectedAppointment] = useState(null);
 
     return (
         <div className={'bg-gray-100 h-screen p-4'}>
@@ -59,19 +31,19 @@ export const DoctorDashboard = () => {
                     <MainContent
                         medicines={medicines}
                         setMedicines={setMedicines}
-                        setSelectedPatient={setSelectedPatient}
-                        selectedPatient={selectedPatient}
+                        selectedAppointment={selectedAppointment}
+                        setSelectedAppointment={setSelectedAppointment}
                     />
                 </div>
                 <div className={'w-2/3'}>
-                    <PrescriptionList medicines={medicines}/>
+                    <PrescriptionList medicines={medicines} selectedAppointment={selectedAppointment}/>
                 </div>
             </div>
         </div>
     )
 }
 
-const MainContent = ({medicines, setMedicines, selectedPatient, setSelectedPatient}) => {
+const MainContent = ({medicines, setMedicines, selectedAppointment, setSelectedAppointment}) => {
     const [selectedTab, setSelectedTab] = useState('prescription')
     return(
         <Card className={'p-4 h-full'}>
@@ -83,7 +55,7 @@ const MainContent = ({medicines, setMedicines, selectedPatient, setSelectedPatie
             {/*tab content*/}
             <div>
                 {selectedTab === 'prescription' && <Prescription medicines={medicines} setMedicines={setMedicines}/>}
-                {selectedTab === 'patient-history' && <Patients selectedPatient={selectedPatient} setSelectedPatient={setSelectedPatient}/>}
+                {selectedTab === 'patient-history' && <Patients setSelectedAppointment={setSelectedAppointment} selectedAppointment={selectedAppointment}/>}
             </div>
         </Card>
     )
@@ -172,19 +144,37 @@ const MedicineForm = ({setMedicines, medicines}) => {
 }
 
 
-const PrescriptionList = ({medicines}) => {
+const PrescriptionList = ({medicines, selectedAppointment}) => {
 
-    const [prescription, setPrescription] = useState(
+    const {userId} = useSelector(state => state.auth);
+    
+    const [prescription, setPresctiption] = useState(
         {
-            patient: 'Patient_Name',
-            doctor: 'Doctor_Name',
+            patient: selectedAppointment?.patient.userId,
+            doctor: userId,
             date: new Date().toLocaleDateString(),
             medicines: medicines
         }
     );
-
-    const handlePrescribe = () => {
-        {/*TODO: Should send the data to the database*/}
+    
+    useEffect(() => {
+        setPresctiption({
+            ...prescription,
+            patient: selectedAppointment?.patient.userId,
+            doctor: userId,
+            date: new Date().toLocaleDateString(),
+            medicines: medicines
+        })
+    }, [medicines, selectedAppointment]);
+  
+    const handlePrescribe = async() => {
+        if(medicines.length === 0) return;
+        console.log('Sent Prescription: ', prescription)
+        
+        const response = await createPrescription(prescription);
+        if(response) {
+            console.log('Prescription Created', response);
+        }
     }
 
     return(
@@ -196,8 +186,8 @@ const PrescriptionList = ({medicines}) => {
                 </div>
             </div>
             <div className={'p-4'}>
-                <Typography className={'text-gray-800 font-semibold text-sm mb-2'}>Patient: <span className={'font-normal'}>Patient_Name</span></Typography>
-                <Typography className={'text-gray-800 font-semibold text-sm mb-2'}>Patient: <span className={'font-normal'}>Doctor_Name</span></Typography>
+                <Typography className={'text-gray-800 font-semibold text-sm mb-2'}>Patient: <span className={'font-normal'}>{selectedAppointment?.patient.firstName} {selectedAppointment?.patient.lastName}</span></Typography>
+                <Typography className={'text-gray-800 font-semibold text-sm mb-2'}>Doctor: <span className={'font-normal'}>Dr. {selectedAppointment?.doctor.firstName} {selectedAppointment?.doctor.lastName}</span></Typography>
                 <Typography className={'text-gray-800 font-semibold text-sm mb-4'}>Date: <span className={'font-normal'}>{new Date().toLocaleDateString()}</span></Typography>
                 <Typography className={'text-gray-800 font-semibold text-sm mb-2'}>Medicines</Typography>
                 <table className="w-full min-w-max table-auto text-left">
@@ -232,31 +222,41 @@ const PrescriptionList = ({medicines}) => {
     )
 }
 
-const Patients = ({selectedPatient, setSelectedPatient}) => {
+const Patients = ({selectedAppointment, setSelectedAppointment }) => {
+
+    const [appointments, setAppointments] = useState([]);
+    const {userId} = useSelector(state => state.auth);
+    useEffect(() => {
+        const fetchAppointments = async() => {
+            const response = await getDoctorAppointments(userId);
+            if(response) {
+                setAppointments(response);
+                console.log('Appointments', response);
+            }
+        }
+
+        fetchAppointments();
+    }, [userId]);
+
+    console.log('Selected Appointment', selectedAppointment);
+
     return (
         <div className={'p-4 mt-4 h-full overflow-y-auto'}>
             <Typography className={'text-gray-800 font-semibold mb-2'}>Patient History</Typography>
             <div className={'h-96 overflow-y-auto'}>
-                {PATIENTS.map((patient, index) => {
+                {appointments && appointments?.map((appointment, index) => {
                     return (
                         <div key={index}
-                             className={`p-4 border-2 border-gray-200 bg-gray-100 mb-2 rounded-lg flex flex-row gap-5 ${selectedPatient === patient.id && 'border-green-400'}`}>
-                            <Avatar
-                                src={'https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1728899190~exp=1728902790~hmac=457545dc36783c0395845b35391d6d42fea87f5cae65595b2e5ef13efd29bfbd&w=740'}/>
-                            <div>
-                                <Typography
-                                    className={'text-gray-800 font-semibold text-sm'}>{patient.name}</Typography>
-                                <Typography className={'text-gray-800 font-semibold text-xs'}>{patient.age}</Typography>
-                            </div>
-                            <div className={'flex items-center justify-end gap-2'}>
-                                <Button variant={"outlined"} size={'sm'} onClick={()=> setSelectedPatient(patient.id)}>
-                                    Select Patient
-                                </Button>
-                                <IconButton variant={"text"}>
-                                    <FontAwesomeIcon icon={faTrash} className={'text-red-600'}/>
-                                </IconButton>
-                            </div>
+                             className={`p-4 border-2 border-gray-200 bg-gray-100 mb-2 rounded-lg flex flex-row gap-5 ${selectedAppointment?.patient.userId === appointment.patient.userId && 'border-green-400'}`}>
 
+                            <div className={''}>
+                                <Typography className={'text-sm text-gray-900'}> <strong className={'font-semibold'}>Patient: </strong> {appointment.patient.firstName} {appointment.patient.lastName}</Typography>
+                                <Typography className={'text-sm text-gray-900'}>
+                                    <strong className={'font-semibold'}>Appointment Date & Time : </strong>
+                                    {formatDateWithTime(appointment.appointmentStart)}
+                                </Typography>
+                                <Button size={'sm'} className={'mt-4'} onClick={() => setSelectedAppointment(appointment)}>View Prescription</Button>
+                            </div>
                         </div>
                     )
                 })}
@@ -269,6 +269,7 @@ const Patients = ({selectedPatient, setSelectedPatient}) => {
 
 PrescriptionList.propTypes = {
     medicines: PropTypes.array.isRequired,
+    selectedAppointment: PropTypes.object,
 };
 
 Prescription.propTypes = {
@@ -279,18 +280,18 @@ Prescription.propTypes = {
 MainContent.propTypes = {
     medicines: PropTypes.array.isRequired,
     setMedicines: PropTypes.func.isRequired,
-    setSelectedPatient: PropTypes.func.isRequired,
-    selectedPatient: PropTypes.object
+    selectedAppointment: PropTypes.object,
+    setSelectedAppointment: PropTypes.func.isRequired
 };
 
 MedicineForm.propTypes = {
     setMedicines: PropTypes.func.isRequired,
-    medicines: PropTypes.array.isRequired
+    medicines: PropTypes.array.isRequired,
 };
 
 Patients.propTypes = {
-    selectedPatient: PropTypes.object,
-    setSelectedPatient: PropTypes.func.isRequired
+    selectedAppointment: PropTypes.object,
+    setSelectedAppointment: PropTypes.func.isRequired
 };
 
 

@@ -90,6 +90,11 @@ public class MasterServiceImpl implements MasterService {
     }
 
     @Override
+    public List<Appointment> getAppointmentsByDoctor(Integer doctorId) {
+        return appointmentService.getAppointmentsByDoctor(doctorId);
+    }
+
+    @Override
     public List<Doctor> getAllDoctors() {
         return doctorService.getAllDoctors();
     }

@@ -22,6 +22,7 @@ public interface MasterService {
     void deleteAppointment(Integer id);
 
     List<Appointment> getAllAppointments();
+    List<Appointment> getAppointmentsByDoctor(Integer doctorId);
 
     // Doctor
     List<Doctor> getAllDoctors();

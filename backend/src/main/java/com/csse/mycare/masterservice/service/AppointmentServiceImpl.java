@@ -48,4 +48,10 @@ public class AppointmentServiceImpl implements AppointmentService {
         return getAllAppointments().stream().filter(appointment -> appointment.getPatient().getUserId()
                 .equals(patientId)).toList();
     }
+
+    @Override
+    public List<Appointment> getAppointmentsByDoctor(Integer doctorId) {
+        return getAllAppointments().stream().filter(appointment -> appointment.getDoctor().getUserId()
+                .equals(doctorId)).toList();
+    }
 }
