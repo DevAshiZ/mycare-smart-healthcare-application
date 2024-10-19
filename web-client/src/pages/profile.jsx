@@ -1,5 +1,7 @@
 import {Card, Typography} from "@material-tailwind/react";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {useSelector} from "react-redux";
+import {getAppointments} from "../services/patientService.js";
 
 
 const TABLE_HEAD = ["Condition", "Date", "Doctor", "Medications"];
@@ -86,7 +88,6 @@ export const Profile = () => {
         <div className={'bg-gray-100 flex h-screen gap-4 p-4'}>
             <UserDetailsSection/>
             <UserRecordsSection/>
-
         </div>
     )
 }
@@ -121,13 +122,18 @@ const UserDetailsSection = () => {
 
 const UserRecordsSection = () => {
 
-    const [currentTab, setCurrentTab] = useState('medical-records');
+    const [currentTab, setCurrentTab] = useState('appointment-records');
 
     return (
         <div className={'w-3/4 h-full'}>
             {/*reservations and stuff*/}
             <Card className={'p-4'}>
                 <div className={'flex gap-4 pb-5 border-b border-gray-200'}>
+                    <Typography
+                        onClick={()=> setCurrentTab('appointment-records')}
+                        className={`text-sm font-bold text-gray-800 hover:text-green-500 hover:border-green-500 ${currentTab === 'payment-records' && 'text-green-600 border-b-2 border-green-600'}`}>
+                        Appointment Records
+                    </Typography>
                     <Typography
                         onClick={()=> setCurrentTab('medical-records')}
                         className={`text-sm font-bold text-gray-800 hover:text-green-500 hover:border-green-500 ${currentTab === 'medical-records' && 'text-green-600 border-b-2 border-green-600'}`}>
@@ -143,6 +149,7 @@ const UserRecordsSection = () => {
                 <div className={'mt-4'}>
                     {currentTab === 'medical-records' && <MedicalRecords/>}
                     {currentTab === 'payment-records' && <PaymentRecords/>}
+                    {currentTab === 'appointment-records' && <AppointmentRecords/>}
                 </div>
             </Card>
         </div>
@@ -235,6 +242,30 @@ const PaymentRecords = () => {
             <div className={'mt-5'}>
                 <Typography className={'text-xs font-normal  text-gray-800'}>No payments found</Typography>
             </div>
+        </div>
+    )
+}
+
+const AppointmentRecords = () => {
+
+
+
+    const { userId} = useSelector((state) => state.auth);
+
+    console.log(userId);
+    useEffect(() => {
+        // fetch appointment records
+        const fetchAppointments = async () => {
+            const appointments = await getAppointments(userId);
+            console.log(appointments);
+        }
+
+        fetchAppointments();
+    }, []);
+
+    return (
+        <div>
+            appointment records
         </div>
     )
 }
