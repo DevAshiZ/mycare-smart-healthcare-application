@@ -7,11 +7,12 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMoneyBill} from "@fortawesome/free-solid-svg-icons";
 import {useNavigate} from "react-router-dom";
 import {APPOINTMENT_FEE} from "../configs/applicationConfigs.js";
+import {getPaymentHistory} from "../services/paymentService.js";
 
 
 const TABLE_HEAD = ["Condition", "Date", "Doctor", "Medications"];
 const APPOINTMENT_HEAD = ["Appointment ID", "Doctor", "Appointment Date", "Duration", "Payment Status" , ""];
-
+const PAYMENT_HEAD = ["Transaction ID", "Appointment ID", "Payment Amount", "Payment Method", "Payment Date", "Status"];
 const TABLE_ROWS = [
     {
         "Patient Name": "John Doe",
@@ -242,11 +243,108 @@ const MedicalRecords = () => {
 }
 
 const PaymentRecords = () => {
+
+    const [payments, setPayments] = useState([]);
+    const { userId} = useSelector((state) => state.auth);
+
+    useEffect(() => {
+        // fetch payment records
+        const fetchPayments = async () => {
+            const payments = await getPaymentHistory(userId);
+            setPayments(payments);
+        }
+        fetchPayments();
+
+        console.log(payments);
+    }, [userId]);
+
     return (
         <div>
             <Typography className={'text-lg font-bold text-gray-800'}>Recent Payments</Typography>
             <div className={'mt-5'}>
-                <Typography className={'text-xs font-normal  text-gray-800'}>No payments found</Typography>
+                {payments.length > 0 ? (
+                    <table className="w-full min-w-max table-auto text-left">
+                        <thead>
+                        <tr>
+                            {PAYMENT_HEAD.map((head) => (
+                                <th
+                                    key={head}
+                                    className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                                >
+                                    <Typography
+                                        variant="small"
+                                        color="blue-gray"
+                                        className="font-normal leading-none opacity-70"
+                                    >
+                                        {head}
+                                    </Typography>
+                                </th>
+                            ))}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {payments.map((payment, index) => {
+                            const isLast = index === TABLE_ROWS.length - 1;
+                            const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
+
+                            return (
+                                <tr key={name}>
+                                    <td className={classes}>
+                                        <Typography
+                                            variant="small"
+                                            color="blue-gray"
+                                            className="font-normal"
+                                        >
+                                            {payment.transactionId}
+                                        </Typography>
+                                    </td>
+                                    <td className={classes}>
+                                        <Typography
+                                            variant="small"
+                                            color="blue-gray"
+                                            className="font-normal"
+                                        >
+                                            {payment.appointmentID}
+                                        </Typography>
+                                    </td>
+                                    <td className={classes}>
+                                        <Typography
+                                            variant="small"
+                                            color="blue-gray"
+                                            className="font-normal"
+                                        >
+                                            Rs. {payment.paymentAmount.toFixed(2)}
+                                        </Typography>
+                                    </td>
+                                    <td className={classes}>
+                                        <Chip value={payment.paymentMethod} color={'green'} variant={'ghost'}
+                                              size={'sm'}/>
+                                    </td>
+
+                                    <td className={classes}>
+                                        <Typography
+                                            variant="small"
+                                            color="blue-gray"
+                                            className="font-normal"
+                                        >
+                                            {formatDateWithTime(payment.paymentDateTime)}
+                                        </Typography>
+                                    </td>
+                                    <td className={classes}>
+                                        <Chip value={payment.isPaid? 'Paid' : 'Pending'} color={payment.isPaid? 'green' : 'orange'} variant={'ghost'}
+                                              size={'sm'}/>
+                                    </td>
+
+
+                                </tr>
+                            );
+                        })}
+                        </tbody>
+                    </table>
+                ) : (
+                    <Typography className={'text-xs font-normal text-gray-800'}>No appointments found</Typography>
+                )
+                }
             </div>
         </div>
     )
@@ -255,7 +353,7 @@ const PaymentRecords = () => {
 const AppointmentRecords = () => {
 
     const navigate = useNavigate();
-    const { userId} = useSelector((state) => state.auth);
+    const {userId} = useSelector((state) => state.auth);
     const [appointments, setAppointments] = useState([]);
 
     useEffect(() => {

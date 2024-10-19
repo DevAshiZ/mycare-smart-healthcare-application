@@ -45,3 +45,19 @@ export const makeCardPayment = async (cardPayment) => {
         });
     }
 }
+
+export const getPaymentHistory = async (userId) => {
+    try {
+        const response = await api.get( `/patient/get-payments?userId=${userId}`)
+
+        return response.data.data;
+    }catch (error) {
+        toast.error(error.response?.data.message , {
+            style: {
+                borderRadius: '10px',
+                background: '#333',
+                color: '#fff',
+            }
+        });
+    }
+}

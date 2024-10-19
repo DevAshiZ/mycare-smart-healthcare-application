@@ -71,7 +71,7 @@ public interface MasterService {
     //Payment
     public PaymentResponse makeCardPayment(CardPaymentRequest cardPaymentRequest) throws PaymentAlreadyMadeException ,PaymentFailedException;
     public PaymentResponse makeCashPayment(CashPaymentRequest cashPaymentRequest) throws PaymentAlreadyMadeException ,PaymentFailedException;
-
+    public List<PaymentResponse> getAllPaymentsByUserId(Integer userId);
 
     // Prescription
     Prescription findPrescriptionById(Long id);

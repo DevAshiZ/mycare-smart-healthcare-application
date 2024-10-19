@@ -5,6 +5,7 @@ import com.csse.mycare.common.BaseResponse;
 import com.csse.mycare.common.exceptions.AppointmentAlreadyExistsException;
 import com.csse.mycare.common.exceptions.PaymentAlreadyMadeException;
 import com.csse.mycare.masterservice.dao.Appointment;
+import com.csse.mycare.masterservice.dao.Payment;
 import com.csse.mycare.patient.dto.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.csse.mycare.common.constants.ErrorCodes.*;
 import static org.springframework.http.HttpStatus.OK;
@@ -98,6 +100,22 @@ public class PatientController extends BaseController {
                 new BaseResponse<>(response),
                 HttpStatus.CREATED
         );
+    }
+
+    @GetMapping("/get-payments")
+    public ResponseEntity<BaseResponse<List<PaymentResponse>>> getPayments(@RequestParam Integer userId) {
+        log.info("getting payments for userId: {}", userId);
+        try {
+            List<PaymentResponse> payments = masterService.getAllPaymentsByUserId(userId);
+            log.info("successfully retrieved payments for userId: {}", userId);
+            return new ResponseEntity<>(
+                    new BaseResponse<>(payments),
+                    OK
+            );
+        } catch (Exception e) {
+            log.error("Error fetching payments for userId: {}", userId, e);
+            return new ResponseEntity<>(new BaseResponse<>(UNKNOWN_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 

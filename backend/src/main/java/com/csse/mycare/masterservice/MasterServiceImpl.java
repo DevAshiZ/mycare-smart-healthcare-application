@@ -302,6 +302,11 @@ public class MasterServiceImpl implements MasterService {
                 .build();
     }
 
+    @Override
+    public List<PaymentResponse> getAllPaymentsByUserId(Integer userId) {
+        return paymentService.getAllPaymentsByUserId(userId);
+    }
+
     /**
      * Create an appointment with a doctor
      *
