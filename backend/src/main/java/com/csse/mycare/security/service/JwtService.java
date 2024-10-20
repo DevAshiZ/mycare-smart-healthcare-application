@@ -69,11 +69,15 @@ public class JwtService {
 
     // Check if token is expired
     private Key getSignInKey() {
+        if (SECRET_KEY == null) {
+            log.error("SECRET_KEY is null");
+            throw new IllegalArgumentException("SECRET_KEY cannot be null");
+        }
         byte[] secretBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(secretBytes);
     }
 
-    private boolean isTokenExpired(String jwtToken) {
+    public boolean isTokenExpired(String jwtToken) {
         return extractExpiration(jwtToken).before(new Date());
     }
 
