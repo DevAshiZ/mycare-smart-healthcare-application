@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-@TestPropertySource(locations = "classpath:application.properties")
+@TestPropertySource(locations = "classpath:application.yml")
 public class TokenCreationTest {
 
     @InjectMocks

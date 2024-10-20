@@ -70,7 +70,7 @@ const Prescription = ({medicines,setMedicines }) => {
                   {medicines && medicines.map((medicine, index)  => {
                       return (
                           <div key={index} className={'flex gap-2 items-center px-4 p-2 mb-2 border-2 border-gray-200 rounded-full w-44 justify-between'}>
-                              <Typography className={'text-xs text-gray-800 font-semibold hover:text-green-400 cursor-pointer'}>{medicine.medicationName}</Typography>
+                              <Typography className={'text-xs text-gray-800 font-semibold hover:text-green-400 cursor-pointer'}>{medicine.medicineName}</Typography>
                               <FontAwesomeIcon icon={faX} className={'text-red-600 w-3 h-3 cursor-pointer'} onClick={() => {
                                   setMedicines(medicines.filter((_, i) => i !== index));
                               }}/>
@@ -92,7 +92,7 @@ const Prescription = ({medicines,setMedicines }) => {
 const MedicineForm = ({setMedicines, medicines}) => {
 
     const [medicine, setMedicine] = useState({
-        medicationName: '',
+        medicineName: '',
         dosage: '',
         frequency: '',
         duration: '',
@@ -102,7 +102,7 @@ const MedicineForm = ({setMedicines, medicines}) => {
     const handleAddMedicine = () => {
         setMedicines([...medicines, medicine]);
         setMedicine({
-            medicationName: '',
+            medicineName: '',
             dosage: '',
             frequency: '',
             duration: '',
@@ -119,7 +119,7 @@ const MedicineForm = ({setMedicines, medicines}) => {
 
     return (
         <div className={'flex flex-col gap-2 mt-4'}>
-            <Input onChange={handleChange} label={'Medication Name'} name={'medicationName'}/>
+            <Input onChange={handleChange} label={'Medication Name'} name={'medicineName'}/>
             <Input onChange={handleChange} label={'Dosage'} name={'dosage'}/>
 
             <Select label={'Frequency'} name={'frequency'} onChange={(value) =>
@@ -150,9 +150,9 @@ const PrescriptionList = ({medicines, selectedAppointment}) => {
     
     const [prescription, setPresctiption] = useState(
         {
-            patient: selectedAppointment?.patient.userId,
-            doctor: userId,
-            date: new Date().toLocaleDateString(),
+            patientId: selectedAppointment?.patient.userId,
+            doctorId: userId,
+            issueDate: new Date().toISOString(),
             medicines: medicines
         }
     );
@@ -160,9 +160,9 @@ const PrescriptionList = ({medicines, selectedAppointment}) => {
     useEffect(() => {
         setPresctiption({
             ...prescription,
-            patient: selectedAppointment?.patient.userId,
-            doctor: userId,
-            date: new Date().toLocaleDateString(),
+            patientId: selectedAppointment?.patient.userId,
+            doctorId: userId,
+            issueDate:  new Date().toISOString().replace('Z', '+00:00'),
             medicines: medicines
         })
     }, [medicines, selectedAppointment]);
@@ -207,7 +207,7 @@ const PrescriptionList = ({medicines, selectedAppointment}) => {
                         const classes = isLast ? "p-3 text-sm text-gray-900" : "p-3 border-b border-blue-gray-50 text-sm text-gray-900";
                         return (
                             <tr key={index}>
-                                <td className={classes}>{medicine.medicationName}</td>
+                                <td className={classes}>{medicine.medicineName}</td>
                                 <td className={classes}>{medicine.dosage}</td>
                                 <td className={classes}>{medicine.frequency}</td>
                                 <td className={classes}>{medicine.duration}</td>

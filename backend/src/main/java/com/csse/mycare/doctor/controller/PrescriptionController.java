@@ -24,12 +24,12 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 @RequestMapping("/prescription")
 public class PrescriptionController extends BaseController {
     @PostMapping("/issue")
-    public ResponseEntity<BaseResponse<Prescription>> issuePrescription(@RequestBody PrescriptionDTO prescriptionRequest) {
+    public ResponseEntity<BaseResponse<Boolean>> issuePrescription(@RequestBody PrescriptionDTO prescriptionRequest) {
         try {
             log.info("Started saving prescription info for patient: {}, issued by doctor: {}",
                     prescriptionRequest.getPatientId(), prescriptionRequest.getDoctorId());
-            Prescription prescription = masterService.savePrescription(prescriptionRequest);
-            return new ResponseEntity<>(new BaseResponse<>(prescription), CREATED);
+            masterService.savePrescription(prescriptionRequest);
+            return new ResponseEntity<>(new BaseResponse<>(true), CREATED);
         } catch (ParseException e) {
             log.error("Invalid time format : {}", prescriptionRequest.getIssueDate());
             return new ResponseEntity<>(new BaseResponse<>(INVALID_TIME_FORMAT), INTERNAL_SERVER_ERROR);

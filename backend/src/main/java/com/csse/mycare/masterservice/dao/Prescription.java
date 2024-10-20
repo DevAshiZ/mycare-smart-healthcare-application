@@ -21,13 +21,13 @@ public class Prescription {
     @Column(name = "prescription_id")
     private Integer prescriptionId;
 
-    @OneToOne
+    @ManyToOne
     private Patient patient;
-    @OneToOne
+    @ManyToOne
     private Doctor doctor;
     @Column(name = "issue_date")
     private Date issueDate;
 
-    @OneToMany
-    List<Medicine> medicines = new ArrayList<>();
+    @OneToMany(mappedBy = "medicineId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Medicine> medicines = new ArrayList<>();
 }

@@ -179,6 +179,11 @@ const AddSchedule = () => {
             return;
         }
 
+        setScheduleData({
+            ...scheduleData,
+            duration: parseInt(scheduleData.duration, 10) * 60,
+        })
+
         await createSchedule(scheduleData);
     }
 
