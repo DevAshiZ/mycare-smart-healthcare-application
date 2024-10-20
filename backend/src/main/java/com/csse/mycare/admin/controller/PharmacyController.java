@@ -67,7 +67,7 @@ public class PharmacyController extends BaseController {
     }
 
     @PostMapping("/delete-pharmacy")
-    public ResponseEntity<BaseResponse<Boolean>> deletePharmacy(@RequestBody Integer id) {
+    public ResponseEntity<BaseResponse<Boolean>> deletePharmacy(Integer id) {
         try {
             log.info("Deleting pharmacy: {}", id);
             masterService.deletePharmacy(id);

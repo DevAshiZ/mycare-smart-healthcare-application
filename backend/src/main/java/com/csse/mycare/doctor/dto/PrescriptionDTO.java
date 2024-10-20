@@ -11,8 +11,8 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class PrescriptionDTO {
-    Integer patientId;
-    Integer doctorId;
-    String issueDate;
-    List<Medicine> medicines;
+    private Integer patientId;
+    private Integer doctorId;
+    private String issueDate;
+    private List<Medicine> medicines;
 }
